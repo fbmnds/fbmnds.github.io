@@ -1,0 +1,23 @@
+{
+  	"schema": {
+    	"type": "object",
+    	"title": "tagged link",
+    	"properties": {
+    		"id": { "type": "integer" },
+      		"href":  { "type": "string" },
+      		"label": { "type": "string" },
+      		"tags": { 
+      			"type": "string",
+      			"array": [] 
+      		},
+      		"img": { 
+      			"type": "object",
+      			"properties": {
+      				"src": "string",
+      				"id": "string"
+      			},
+      			"array": []
+      		},
+    	}
+  	}
+}
