@@ -1,6 +1,6 @@
 
- var width = 640,
-     height = 570;
+ var width = 980,
+     height = 600;
 
 var color = d3.scale.category20();
 
@@ -13,8 +13,8 @@ var svg = d3.select("#tagged_links").append("svg")
 
 var force = d3.layout.force()
     .size([width, height])
-    .charge(-1500)
-    .linkDistance(function(d) { return radius(d.source.size) + radius(d.target.size) + 30; });
+    .charge(-1000)
+    .linkDistance(function(d) { return radius(d.source.size) + radius(d.target.size) + 20; });
 
 d3.json("data/graph.json", function(graph) {
   force
@@ -39,15 +39,14 @@ d3.json("data/graph.json", function(graph) {
 
   node.append("circle")
       .attr("r", function(d) { return radius(d.size*2); })
-      .style("fill", function(d) { return (typeof d.category !== "undefined" ? color(d.category) : color(d.link)); });
+      .style("fill", function(d) { return color(d.node); });
 
   node.append("text")
       .attr("dy", ".7em")
-      .attr("text-anchor", "middle")
+      .attr("text-anchor", "top")
       .text(function(d) { 
-        var res = typeof d.category !== "undefined" ? d.category : "";
         //return (res.length > 4 ? res.slice(0,4) + "[]" : res); 
-        return res;
+        return (d.category == "tag") ? d.node : "";//res;
       });
 
   function tick() {
