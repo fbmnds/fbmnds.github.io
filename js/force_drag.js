@@ -1,6 +1,6 @@
 
- var width = 980,
-     height = 600;
+ var width = 800,
+     height = 480;
 
 var color = d3.scale.category20();
 
@@ -9,7 +9,8 @@ var radius = d3.scale.sqrt()
 
 var svg = d3.select("#tagged_links").append("svg")
     .attr("width", width)
-    .attr("height", height);
+    .attr("height", height)
+    .attr("xmlns", "http://www.w3.org/2000/svg");
 
 var force = d3.layout.force()
     .size([width, height])
@@ -33,7 +34,7 @@ d3.json("data/graph.json", function(graph) {
 
   var node = svg.selectAll(".node")
       .data(graph.nodes)
-    .enter().append("g")
+      .enter().append("g")
       .attr("class", "node")
       .call(force.drag);
 
