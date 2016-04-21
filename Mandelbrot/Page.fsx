@@ -20,10 +20,10 @@ module Program =
 
     let maxIter = 512
 
-    let height = 800
-    let width = 1000
+    let height = 300
+    let width = 400
 
-    let minX = -2.1 
+    let minX = -2.1
     let maxX = 0.5
     let minY = -1.4
     let maxY = 1.4
@@ -38,7 +38,7 @@ module Program =
           z <- iteratePoint p z
           i <- i + 1
         i
-    
+
     let iterCountToColor (i : int) : Color =
         let i = maxIter - i
         { r = 0; g = i % 256; b = 100 * (i / 256); a = 255 }
@@ -50,36 +50,45 @@ module Program =
         iterCountToColor i
 
     let showSet() =
-        let ctx = Globals.document.getElementsByTagName_canvas().[0].getContext_2d()
-            
-        let img = ctx.createImageData(float width, float height)
-        for y = 0 to height-1 do
-            for x = 0 to width-1 do
-                let index = (x + y * width) * 4
-                let color = getCoordColor (x, y)
-                img.data.[index+0] <- float color.r
-                img.data.[index+1] <- float color.g
-                img.data.[index+2] <- float color.b
-                img.data.[index+3] <- float color.a
-        ctx.putImageData(img, 20., 20.)
+        async{
+            let ctx = Globals.document.getElementsByTagName_canvas().[0].getContext_2d()
 
+            let img = ctx.createImageData(float width, float height)
+            for y = 0 to height-1 do
+                for x = 0 to width-1 do
+                    let index = (x + y * width) * 4
+                    let color = getCoordColor (x, y)
+                    img.data.[index+0] <- float color.r
+                    img.data.[index+1] <- float color.g
+                    img.data.[index+2] <- float color.b
+                    img.data.[index+3] <- float color.a
+            ctx.putImageData(img, 20., 20.)
+        }
+
+    /// Dynamic operator that returns HTML element by ID
+    let (?) (doc:Document) name :'R =
+      doc.getElementById(name) :?> 'R
+
+    /// Setup button event handler to start the rendering
     let main() =
-        showSet()
-    
+      let go : HTMLButtonElement = Globals.document?go
+      go.addEventListener_click(fun _ ->
+        showSet() |> Async.StartImmediate; null)
+
     let code =
         Compiler.Compiler.Compile(
             // This argument is the quotation to compile
-            <@ main() @>, 
-            // This argument tells the compiler not to wrap 
+            <@ main() @>,
+            // This argument tells the compiler not to wrap
             // the result in a return statement
-            noReturn=true//, 
-            // This tells the compiler about the additional components 
+            noReturn=true//,
+            // This tells the compiler about the additional components
             // that are needed to compile the code. In this case,
             // these are the components that provide mappings for the
             // FSharp.Data type providers (incl. the WorldBank provider).
-            //components = FunScript.Data.Components.DataProviders  
+            //components = FunScript.Data.Components.DataProviders
             )
 
-    let filePath = Path.Combine(__SOURCE_DIRECTORY__, @"Web\page.js")
+    let filePath = Path.Combine(__SOURCE_DIRECTORY__, @"page.js")
     File.WriteAllText(filePath, code)
     //do Runtime.Run(directory="Web")
