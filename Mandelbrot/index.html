@@ -1,19 +1,22 @@
 ﻿<!doctype html>
 <html>
 <head>
-  <script src="http://code.jquery.com/jquery-1.8.0.js"></script>
+  <script src="/lib/jquery-1.8.0.js"></script>
   
   <meta http-equiv='Content-Type' content='text/html; charset=utf-8'>
 </head>
     <body>
         <div>
-            <!-- [title] -->Mandelbrot<!-- [/title] -->
-        </div>
-        <div>
-            <!-- [body] -->
-            <canvas align="center" id="canvas" width="1000" height="800"></canvas>
-            <script src="page.js"> </script>
-            <!-- [/body] -->
+            <h1><!-- [title] -->Mandelbrot<!-- [/title] --></h1>
+            <div>
+                <!-- [body] -->
+                <img src="mandelbrot.png" width="400" height="300"/>
+                <canvas id="canvas" width="400" height="300" style="background:#F0E5D1"></canvas>
+                <br />
+                <input type="button" id="go" value="Render" style="font-size:120%; border:3px solid black;background:#F0E5D1;padding:7px 15px 7px 15px;margin-top:30px;" />
+                <script type="text/javascript" src="page.js"></script>
+                <!-- [/body] -->
+            </div>
         </div>
     </body>
 </html>
