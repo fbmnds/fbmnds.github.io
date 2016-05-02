@@ -15,17 +15,26 @@ Use it to make something cool, have fun, and share what you've learned with othe
 */
 
 /* Font */
+@font-face {
+    font-family: "Segoe UI";
+    font-weight: 200;
+    src: local("Segoe UI Light");
+}
+@font-face {
+    font-family: "Segoe UI Light";
+    src: url("/css/fonts/segoeuil.ttf") format("truetype");
+}
+
 @font-face{
     font-family: "shell-icons";
-    src: url("fonts/shell-icons-0.4.0.eot");
-    src: url("fonts/shell-icons-0.4.0.eot?#iefix") format("embedded-opentype"),
-         url("fonts/shell-icons-0.4.0.woff") format("woff"),
-         url("fonts/shell-icons-0.4.0.ttf") format("truetype");
+    src: url("/css/fonts/shell-icons-0.4.0.eot?#iefix") format("embedded-opentype"),
+         url("/css/fonts/shell-icons-0.4.0.woff") format("woff"),
+         url("/css/fonts/shell-icons-0.4.0.ttf") format("truetype");
 }
 
 /* General */
 body {
-    font-family: "Segoe UI";
+    font-family: "Segoe UI Light","sans-serif";
     background: white;
 }
 
@@ -39,6 +48,7 @@ body {
 }
 
 .entry-title {
+    -ms-word-wrap: break-word;
     word-wrap: break-word;
 }
 
@@ -52,6 +62,10 @@ a:hover {
 
 .h1, .h2, .h3, .h4, .h5, .h6, h1, h2, h3, h4, h5, h6 {
     font-weight: normal;
+}
+
+a.h1 {
+    color: #ffffff;
 }
 
 .h1, .h2, h1, h2 {
@@ -950,17 +964,17 @@ h2.entry-title a {
 /*--------------------------------------------------------------------------*/
 
 /* identifier */
-span.i { color:#d1d1d1; }
+span.i { color:#36717e; }
 /* string */
-span.s { color:#d4b43c; }
+span.s { color:#ba9b26; }
 /* keywords */
-span.k { color:#4e98dc; }
+span.k { color:rgb(5, 41, 182); }
 /* comment */
 span.c { color:#96C71D; }
 /* operators */
-span.o { color:#af75c1; }
+span.o { color:#964cad; }
 /* numbers */
-span.n { color:#96C71D; }
+span.n { color:rgb(125, 39, 39); }
 /* line number */
 span.l { color:#80b0b0; }
 
@@ -973,7 +987,7 @@ span.fsi { color:#808080; }
 
 /* omitted */
 span.omitted {
-    background:#3c4e52;
+    background:rgb(239, 240, 241);
   border-radius:5px;
     color:#808080;
     padding:0px 0px 1px 0px;
@@ -1000,10 +1014,10 @@ table.pre, pre.fssnip, pre {
   font: 9pt 'Droid Sans Mono',consolas,monospace;
   width:90%;
   margin:10px 20px 20px 20px;
-  background-color:#212d30;
+  background-color:rgb(239, 240, 241);
   padding:10px;
   border-radius:5px;
-  color:#d1d1d1;
+  color:#212d30;
 }
 table.pre pre {
   padding:0px;
