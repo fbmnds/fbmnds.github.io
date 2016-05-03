@@ -1006,13 +1006,18 @@ table.pre pre {
   margin:0px;
   border:none;
 }
+code {
+    white-space: nowrap;
+    overflow: auto;
+    font: 9pt 'Droid Sans Mono',consolas,monospace;
+}
 table.pre, pre.fssnip, pre {
   line-height:13pt;
   border:1px solid #d8d8d8;
   border-collapse:separate;
   white-space:pre;
   font: 9pt 'Droid Sans Mono',consolas,monospace;
-  width:90%;
+  width:95%;
   margin:10px 20px 20px 20px;
   background-color:rgb(239, 240, 241);
   padding:10px;

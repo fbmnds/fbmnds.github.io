@@ -2,10 +2,10 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>Some ( Posts ) | </title>
+    <title>Some ( Posts ) | Scripting OpenGL with F#</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="">
-    <meta name="author" content="">
+    <meta name="description" content="Scripting OpenGL 3.1 2D with F# using WPF and SharpGL">
+    <meta name="author" content="fbmnds">
 
     <link rel="icon" type="image/png" href="/favicon.png" />
     <link rel="stylesheet" href="/css/bootstrap-3.3.6.min.css">
@@ -27,7 +27,7 @@
                         <div id="blog-logo-area" class="navbar-header">
                             <div id="blog-logo" data-toggle="collapse" data-target="#blog-menu">
                                 <div id="blog-logo-text">
-                                    <a href="https://fbmnds.github.io/" class="h1"><h1>Some ( Posts )</h1></a>
+                                    <h1>Some ( Posts )</h1>
                                 </div>
                             </div>
                         </div>
@@ -48,15 +48,14 @@
 <p>The purpose of this F# script is to provide the necessary plumbing for using OpenGL within WPF. The canonical
 approach for embedding OpenGL in the window management system is based on the platform-independant C/C++ library GLUT.
 GLUT is QT based while I was heading for a WPF solution. Without further investigation on OpenTK and other
-alternatives, I picked up Dave Kerr´s <a href="https://github.com/dwmkerr/sharpgl">SharpGL</a>.</p>
+alternatives based on first impression, I picked up Dave Kerr´s <a href="https://github.com/dwmkerr/sharpgl">SharpGL</a>.</p>
 <h3><a name="Hardware-Support-for-OpenGL-3-1" class="anchor" href="#Hardware-Support-for-OpenGL-3-1">Hardware Support for OpenGL 3.1</a></h3>
-<p>Although quite a bit outdated compared to the current version of OpenGL 4.4, I had to resort to OpenGL 3.1 because of
-limitations imposed by the laptops I have in dayly use (not bleeding edge but decent enterprisy Lenovos).
-Another aspect is that OpenGL 3.1 correlates to the current OpenGL ES version of mobile platforms, namely on iPhone OS and
-Android.</p>
+<p>Although quite a bit outdated compared to the current version of OpenGL 4.4, OpenGL 3.1 was the desired option because of
+limitations imposed by the - not actually outdated - laptops I have in dayly use. Another reason to look at OpenGL 3.1 is
+that correlates to the current OpenGL ES version of mobile platforms, namely on iPhone OS and Android.</p>
 <h2><a name="Dependencies" class="anchor" href="#Dependencies">Dependencies</a></h2>
-<p>I built the current <a href="https://github.com/dwmkerr/sharpgl">SharpGL</a> version easily from scratch using the provided build
-script. Otherwise, standard WPF/.NET libraries are referenced.</p>
+<p>Building the current <a href="https://github.com/dwmkerr/sharpgl">SharpGL</a> version from scratch is easily done using the provided build
+script. These dll files and the standard WPF/.NET libraries are referenced.</p>
 <table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l"> 1: </span>
 <span class="l"> 2: </span>
 <span class="l"> 3: </span>
@@ -92,14 +91,12 @@ script. Otherwise, standard WPF/.NET libraries are referenced.</p>
 <span class="l">33: </span>
 <span class="l">34: </span>
 <span class="l">35: </span>
-<span class="l">36: </span>
 </pre></td>
 <td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span class="prep">#r</span> <span class="s">&quot;PresentationCore.dll&quot;</span>;;
 <span class="prep">#r</span> <span class="s">&quot;PresentationFramework.dll&quot;</span>;;
 <span class="prep">#r</span> <span class="s">&quot;System.Xaml.dll&quot;</span>;;
 <span class="prep">#r</span> <span class="s">&quot;WindowsBase.dll&quot;</span>;;
 <span class="prep">#r</span> <span class="s">&quot;UIAutomationTypes&quot;</span>;;
-
 
 <span class="prep">#r</span> <span class="s">@&quot;SharpGL.WPF.2.4.0.0\SharpGL.dll&quot;</span>
 <span class="prep">#r</span> <span class="s">@&quot;SharpGL.WPF.2.4.0.0\SharpGL.WPF.dll&quot;</span>
@@ -136,124 +133,41 @@ script. Otherwise, standard WPF/.NET libraries are referenced.</p>
 <h2><a name="F-convenience-wrapper-for-SharpGL" class="anchor" href="#F-convenience-wrapper-for-SharpGL">F# convenience wrapper for SharpGL</a></h2>
 <p>The <code>Base</code> type keeps convenience functions for SharpGL and generic functions related to windows management.
 It will be further enhanced for managing shader programs.</p>
-<table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l">  1: </span>
-<span class="l">  2: </span>
-<span class="l">  3: </span>
-<span class="l">  4: </span>
-<span class="l">  5: </span>
-<span class="l">  6: </span>
-<span class="l">  7: </span>
-<span class="l">  8: </span>
-<span class="l">  9: </span>
-<span class="l"> 10: </span>
-<span class="l"> 11: </span>
-<span class="l"> 12: </span>
-<span class="l"> 13: </span>
-<span class="l"> 14: </span>
-<span class="l"> 15: </span>
-<span class="l"> 16: </span>
-<span class="l"> 17: </span>
-<span class="l"> 18: </span>
-<span class="l"> 19: </span>
-<span class="l"> 20: </span>
-<span class="l"> 21: </span>
-<span class="l"> 22: </span>
-<span class="l"> 23: </span>
-<span class="l"> 24: </span>
-<span class="l"> 25: </span>
-<span class="l"> 26: </span>
-<span class="l"> 27: </span>
-<span class="l"> 28: </span>
-<span class="l"> 29: </span>
-<span class="l"> 30: </span>
-<span class="l"> 31: </span>
-<span class="l"> 32: </span>
-<span class="l"> 33: </span>
-<span class="l"> 34: </span>
-<span class="l"> 35: </span>
-<span class="l"> 36: </span>
-<span class="l"> 37: </span>
-<span class="l"> 38: </span>
-<span class="l"> 39: </span>
-<span class="l"> 40: </span>
-<span class="l"> 41: </span>
-<span class="l"> 42: </span>
-<span class="l"> 43: </span>
-<span class="l"> 44: </span>
-<span class="l"> 45: </span>
-<span class="l"> 46: </span>
-<span class="l"> 47: </span>
-<span class="l"> 48: </span>
-<span class="l"> 49: </span>
-<span class="l"> 50: </span>
-<span class="l"> 51: </span>
-<span class="l"> 52: </span>
-<span class="l"> 53: </span>
-<span class="l"> 54: </span>
-<span class="l"> 55: </span>
-<span class="l"> 56: </span>
-<span class="l"> 57: </span>
-<span class="l"> 58: </span>
-<span class="l"> 59: </span>
-<span class="l"> 60: </span>
-<span class="l"> 61: </span>
-<span class="l"> 62: </span>
-<span class="l"> 63: </span>
-<span class="l"> 64: </span>
-<span class="l"> 65: </span>
-<span class="l"> 66: </span>
-<span class="l"> 67: </span>
-<span class="l"> 68: </span>
-<span class="l"> 69: </span>
-<span class="l"> 70: </span>
-<span class="l"> 71: </span>
-<span class="l"> 72: </span>
-<span class="l"> 73: </span>
-<span class="l"> 74: </span>
-<span class="l"> 75: </span>
-<span class="l"> 76: </span>
-<span class="l"> 77: </span>
-<span class="l"> 78: </span>
-<span class="l"> 79: </span>
-<span class="l"> 80: </span>
-<span class="l"> 81: </span>
-<span class="l"> 82: </span>
-<span class="l"> 83: </span>
-<span class="l"> 84: </span>
-<span class="l"> 85: </span>
-<span class="l"> 86: </span>
-<span class="l"> 87: </span>
-<span class="l"> 88: </span>
-<span class="l"> 89: </span>
-<span class="l"> 90: </span>
-<span class="l"> 91: </span>
-<span class="l"> 92: </span>
-<span class="l"> 93: </span>
-<span class="l"> 94: </span>
-<span class="l"> 95: </span>
-<span class="l"> 96: </span>
-<span class="l"> 97: </span>
-<span class="l"> 98: </span>
-<span class="l"> 99: </span>
-<span class="l">100: </span>
-<span class="l">101: </span>
-<span class="l">102: </span>
-<span class="l">103: </span>
-<span class="l">104: </span>
-<span class="l">105: </span>
-<span class="l">106: </span>
-<span class="l">107: </span>
-<span class="l">108: </span>
-<span class="l">109: </span>
-<span class="l">110: </span>
-<span class="l">111: </span>
-<span class="l">112: </span>
-<span class="l">113: </span>
-<span class="l">114: </span>
+<table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l"> 1: </span>
+<span class="l"> 2: </span>
+<span class="l"> 3: </span>
+<span class="l"> 4: </span>
+<span class="l"> 5: </span>
+<span class="l"> 6: </span>
+<span class="l"> 7: </span>
+<span class="l"> 8: </span>
+<span class="l"> 9: </span>
+<span class="l">10: </span>
+<span class="l">11: </span>
+<span class="l">12: </span>
+<span class="l">13: </span>
+<span class="l">14: </span>
+<span class="l">15: </span>
+<span class="l">16: </span>
+<span class="l">17: </span>
+<span class="l">18: </span>
+<span class="l">19: </span>
+<span class="l">20: </span>
+<span class="l">21: </span>
+<span class="l">22: </span>
+<span class="l">23: </span>
+<span class="l">24: </span>
+<span class="l">25: </span>
+<span class="l">26: </span>
+<span class="l">27: </span>
+<span class="l">28: </span>
+<span class="l">29: </span>
+<span class="l">30: </span>
+<span class="l">31: </span>
+<span class="l">32: </span>
 </pre></td>
 <td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span class="k">type</span> <span onmouseout="hideTip(event, 'fs17', 32)" onmouseover="showTip(event, 'fs17', 32)" class="t">Base</span> <span class="o">=</span>
-    <span class="c">(*** hide ***)</span>
-    <span class="c">// Load the shader sourcecode from the named manifest resource.</span>
+    <span class="c">/// Load the shader sourcecode from the named manifest resource.</span>
     <span class="k">static</span> <span class="k">member</span> <span onmouseout="hideTip(event, 'fs18', 33)" onmouseover="showTip(event, 'fs18', 33)" class="f">LoadManifestResource</span> (<span onmouseout="hideTip(event, 'fs19', 34)" onmouseover="showTip(event, 'fs19', 34)" class="i">textFileName</span> <span class="o">:</span> <span onmouseout="hideTip(event, 'fs20', 35)" onmouseover="showTip(event, 'fs20', 35)" class="t">string</span>) <span class="o">=</span>
         <span class="k">let</span> <span onmouseout="hideTip(event, 'fs21', 36)" onmouseover="showTip(event, 'fs21', 36)" class="i">executingAssembly</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs22', 37)" onmouseover="showTip(event, 'fs22', 37)" class="t">Assembly</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs23', 38)" onmouseover="showTip(event, 'fs23', 38)" class="f">GetExecutingAssembly</span>()
         <span class="k">let</span> <span onmouseout="hideTip(event, 'fs24', 39)" onmouseover="showTip(event, 'fs24', 39)" class="i">pathToDots</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs19', 40)" onmouseover="showTip(event, 'fs19', 40)" class="i">textFileName</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs25', 41)" onmouseover="showTip(event, 'fs25', 41)" class="f">Replace</span>(<span class="s">&quot;</span><span class="e">\\</span><span class="s">&quot;</span>, <span class="s">&quot;.&quot;</span>)
@@ -262,16 +176,17 @@ It will be further enhanced for managing shader programs.</p>
         <span class="k">use</span> <span onmouseout="hideTip(event, 'fs30', 48)" onmouseover="showTip(event, 'fs30', 48)" class="i">stream</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs21', 49)" onmouseover="showTip(event, 'fs21', 49)" class="i">executingAssembly</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs31', 50)" onmouseover="showTip(event, 'fs31', 50)" class="f">GetManifestResourceStream</span>(<span onmouseout="hideTip(event, 'fs26', 51)" onmouseover="showTip(event, 'fs26', 51)" class="i">location</span>)
         <span class="k">use</span> <span onmouseout="hideTip(event, 'fs32', 52)" onmouseover="showTip(event, 'fs32', 52)" class="i">reader</span> <span class="o">=</span> <span class="k">new</span> <span onmouseout="hideTip(event, 'fs33', 53)" onmouseover="showTip(event, 'fs33', 53)" class="t">StreamReader</span>(<span onmouseout="hideTip(event, 'fs30', 54)" onmouseover="showTip(event, 'fs30', 54)" class="i">stream</span>)
         <span onmouseout="hideTip(event, 'fs32', 55)" onmouseover="showTip(event, 'fs32', 55)" class="i">reader</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs34', 56)" onmouseover="showTip(event, 'fs34', 56)" class="f">ReadToEnd</span>()
-    <span class="c">(*** hide ***)</span>
-    <span class="c">// Load the shader sourcecode from the text file.</span>
+    
+    <span class="c">/// Load the shader sourcecode from the text file.</span>
     <span class="k">static</span> <span class="k">member</span> <span onmouseout="hideTip(event, 'fs35', 57)" onmouseover="showTip(event, 'fs35', 57)" class="f">LoadTextFile</span> (<span onmouseout="hideTip(event, 'fs19', 58)" onmouseover="showTip(event, 'fs19', 58)" class="i">textFileName</span> <span class="o">:</span> <span onmouseout="hideTip(event, 'fs20', 59)" onmouseover="showTip(event, 'fs20', 59)" class="t">string</span>) <span class="o">=</span>
         <span class="k">if</span> <span onmouseout="hideTip(event, 'fs36', 60)" onmouseover="showTip(event, 'fs36', 60)" class="t">Regex</span>(<span class="s">@&quot;^(([a-zA-Z]:\\)|([a-zA-Z]://)|(//)).*&quot;</span>)<span class="o">.</span><span class="f">IsMatch</span>(<span onmouseout="hideTip(event, 'fs19', 61)" onmouseover="showTip(event, 'fs19', 61)" class="i">textFileName</span>) <span class="k">then</span>
             <span onmouseout="hideTip(event, 'fs37', 62)" onmouseover="showTip(event, 'fs37', 62)" class="t">File</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs38', 63)" onmouseover="showTip(event, 'fs38', 63)" class="f">ReadAllText</span>(<span onmouseout="hideTip(event, 'fs19', 64)" onmouseover="showTip(event, 'fs19', 64)" class="i">textFileName</span>)
         <span class="k">else</span>
             <span onmouseout="hideTip(event, 'fs37', 65)" onmouseover="showTip(event, 'fs37', 65)" class="t">File</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs38', 66)" onmouseover="showTip(event, 'fs38', 66)" class="f">ReadAllText</span>(<span onmouseout="hideTip(event, 'fs39', 67)" onmouseover="showTip(event, 'fs39', 67)" class="t">Path</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs40', 68)" onmouseover="showTip(event, 'fs40', 68)" class="f">Combine</span>(<span class="k">__SOURCE_DIRECTORY__</span>, <span onmouseout="hideTip(event, 'fs19', 69)" onmouseover="showTip(event, 'fs19', 69)" class="i">textFileName</span>))
 
-    <span class="c">// Create an OpenGL instance of named version, otherwise throw an exception.</span>
-    <span class="c">// https://github.com/mattdesl/lwjgl-basics/wiki/GLSL-Versions</span>
+ 
+    <span class="c">/// Create an OpenGL instance of named version, otherwise throw an exception.</span>
+    <span class="c">/// https://github.com/mattdesl/lwjgl-basics/wiki/GLSL-Versions </span>
     <span class="k">static</span> <span class="k">member</span> <span onmouseout="hideTip(event, 'fs41', 70)" onmouseover="showTip(event, 'fs41', 70)" class="f">OpenGL</span> (<span onmouseout="hideTip(event, 'fs42', 71)" onmouseover="showTip(event, 'fs42', 71)" class="i">openGLVersion</span> <span class="o">:</span> <span onmouseout="hideTip(event, 'fs43', 72)" onmouseover="showTip(event, 'fs43', 72)" class="i">Version</span><span class="o">.</span><span class="i">OpenGLVersion</span>)
                          (<span onmouseout="hideTip(event, 'fs44', 73)" onmouseover="showTip(event, 'fs44', 73)" class="i">renderContextType</span> <span class="o">:</span> <span class="i">RenderContextType</span>)
                          <span onmouseout="hideTip(event, 'fs45', 74)" onmouseover="showTip(event, 'fs45', 74)" class="i">width</span> <span onmouseout="hideTip(event, 'fs46', 75)" onmouseover="showTip(event, 'fs46', 75)" class="i">height</span> <span onmouseout="hideTip(event, 'fs47', 76)" onmouseover="showTip(event, 'fs47', 76)" class="i">bitDepth</span>
@@ -283,54 +198,39 @@ It will be further enhanced for managing shader programs.</p>
                           <span onmouseout="hideTip(event, 'fs48', 87)" onmouseover="showTip(event, 'fs48', 87)" class="i">parameters</span>)) <span class="k">then</span>
             <span onmouseout="hideTip(event, 'fs52', 88)" onmouseover="showTip(event, 'fs52', 88)" class="f">failwith</span> (<span onmouseout="hideTip(event, 'fs53', 89)" onmouseover="showTip(event, 'fs53', 89)" class="f">sprintf</span> <span class="s">&quot;Base.glCreate SharpGL.Version.OpenGLVersion </span><span class="pf">%A</span><span class="s">&quot;</span> <span onmouseout="hideTip(event, 'fs42', 90)" onmouseover="showTip(event, 'fs42', 90)" class="i">openGLVersion</span>)
         <span onmouseout="hideTip(event, 'fs50', 91)" onmouseover="showTip(event, 'fs50', 91)" class="i">gl</span>
-    <span class="c">(*** hide ***)</span>
-    <span class="c">// Called after the window and OpenGL are initialized. Called exactly once, before the main loop.</span>
-    <span class="k">static</span> <span class="k">member</span> <span onmouseout="hideTip(event, 'fs54', 92)" onmouseover="showTip(event, 'fs54', 92)" class="f">Init</span> (<span onmouseout="hideTip(event, 'fs55', 93)" onmouseover="showTip(event, 'fs55', 93)" class="v">gl</span> <span class="o">:</span> <span class="i">OpenGL</span> <span onmouseout="hideTip(event, 'fs56', 94)" onmouseover="showTip(event, 'fs56', 94)" class="t">ref</span>)
-             (<span onmouseout="hideTip(event, 'fs57', 95)" onmouseover="showTip(event, 'fs57', 95)" class="i">shaderProgram</span> <span class="o">:</span> <span class="i">ShaderProgram</span>)
-             (<span onmouseout="hideTip(event, 'fs58', 96)" onmouseover="showTip(event, 'fs58', 96)" class="i">attributeLocations</span> <span class="o">:</span> <span onmouseout="hideTip(event, 'fs59', 97)" onmouseover="showTip(event, 'fs59', 97)" class="t">Dictionary</span><span class="o">&lt;</span><span onmouseout="hideTip(event, 'fs60', 98)" onmouseover="showTip(event, 'fs60', 98)" class="t">uint32</span>, <span onmouseout="hideTip(event, 'fs20', 99)" onmouseover="showTip(event, 'fs20', 99)" class="t">string</span><span class="o">&gt;</span>)
-             <span onmouseout="hideTip(event, 'fs61', 100)" onmouseover="showTip(event, 'fs61', 100)" class="i">vertexShaderCode</span>
-             <span onmouseout="hideTip(event, 'fs62', 101)" onmouseover="showTip(event, 'fs62', 101)" class="i">fragmentShaderCode</span> <span class="o">=</span>
-        <span onmouseout="hideTip(event, 'fs57', 102)" onmouseover="showTip(event, 'fs57', 102)" class="i">shaderProgram</span><span class="o">.</span><span class="i">Bind</span>(<span class="o">!</span><span onmouseout="hideTip(event, 'fs55', 103)" onmouseover="showTip(event, 'fs55', 103)" class="i">gl</span>)
-        <span onmouseout="hideTip(event, 'fs58', 104)" onmouseover="showTip(event, 'fs58', 104)" class="i">attributeLocations</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs63', 105)" onmouseover="showTip(event, 'fs63', 105)" class="f">AsEnumerable</span>()
-        <span class="o">|&gt;</span> <span onmouseout="hideTip(event, 'fs64', 106)" onmouseover="showTip(event, 'fs64', 106)" class="t">Seq</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs65', 107)" onmouseover="showTip(event, 'fs65', 107)" class="f">iter</span> (<span class="k">fun</span> <span onmouseout="hideTip(event, 'fs66', 108)" onmouseover="showTip(event, 'fs66', 108)" class="i">x</span> <span class="k">-&gt;</span> <span onmouseout="hideTip(event, 'fs57', 109)" onmouseover="showTip(event, 'fs57', 109)" class="i">shaderProgram</span><span class="o">.</span><span class="i">BindAttributeLocation</span>(<span class="o">!</span><span onmouseout="hideTip(event, 'fs55', 110)" onmouseover="showTip(event, 'fs55', 110)" class="i">gl</span>, <span onmouseout="hideTip(event, 'fs66', 111)" onmouseover="showTip(event, 'fs66', 111)" class="i">x</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs67', 112)" onmouseover="showTip(event, 'fs67', 112)" class="i">Key</span>, <span onmouseout="hideTip(event, 'fs66', 113)" onmouseover="showTip(event, 'fs66', 113)" class="i">x</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs68', 114)" onmouseover="showTip(event, 'fs68', 114)" class="i">Value</span>))
-
-        <span class="k">let</span> <span onmouseout="hideTip(event, 'fs69', 115)" onmouseover="showTip(event, 'fs69', 115)" class="f">vertexShader</span> <span onmouseout="hideTip(event, 'fs70', 116)" onmouseover="showTip(event, 'fs70', 116)" class="i">gl</span> <span onmouseout="hideTip(event, 'fs71', 117)" onmouseover="showTip(event, 'fs71', 117)" class="i">shaderSource</span> <span class="o">=</span>
-            <span class="k">let</span> <span onmouseout="hideTip(event, 'fs72', 118)" onmouseover="showTip(event, 'fs72', 118)" class="i">shader</span> <span class="o">=</span>  <span class="i">Shaders</span><span class="o">.</span><span class="i">VertexShader</span>()
-            <span onmouseout="hideTip(event, 'fs72', 119)" onmouseover="showTip(event, 'fs72', 119)" class="i">shader</span><span class="o">.</span><span class="i">CreateInContext</span>(<span class="o">!</span><span onmouseout="hideTip(event, 'fs70', 120)" onmouseover="showTip(event, 'fs70', 120)" class="i">gl</span>)
-            <span onmouseout="hideTip(event, 'fs72', 121)" onmouseover="showTip(event, 'fs72', 121)" class="i">shader</span><span class="o">.</span><span class="i">SetSource</span>(<span onmouseout="hideTip(event, 'fs71', 122)" onmouseover="showTip(event, 'fs71', 122)" class="i">shaderSource</span>)
-            <span onmouseout="hideTip(event, 'fs72', 123)" onmouseover="showTip(event, 'fs72', 123)" class="i">shader</span><span class="o">.</span><span class="i">Compile</span>()
-            <span class="k">if</span> <span onmouseout="hideTip(event, 'fs51', 124)" onmouseover="showTip(event, 'fs51', 124)" class="f">not</span> (<span onmouseout="hideTip(event, 'fs72', 125)" onmouseover="showTip(event, 'fs72', 125)" class="i">shader</span><span class="o">.</span><span class="i">CompileStatus</span><span class="o">.</span><span class="i">HasValue</span>) <span class="k">then</span>
-                <span onmouseout="hideTip(event, 'fs52', 126)" onmouseover="showTip(event, 'fs52', 126)" class="f">failwith</span> (<span onmouseout="hideTip(event, 'fs53', 127)" onmouseover="showTip(event, 'fs53', 127)" class="f">sprintf</span> <span class="s">&quot;failed with source:</span><span class="e">\n</span><span class="s"> </span><span class="pf">%s</span><span class="s">&quot;</span> <span onmouseout="hideTip(event, 'fs71', 128)" onmouseover="showTip(event, 'fs71', 128)" class="i">shaderSource</span>)
-            <span class="k">if</span> <span onmouseout="hideTip(event, 'fs51', 129)" onmouseover="showTip(event, 'fs51', 129)" class="f">not</span> (<span onmouseout="hideTip(event, 'fs72', 130)" onmouseover="showTip(event, 'fs72', 130)" class="i">shader</span><span class="o">.</span><span class="i">CompileStatus</span><span class="o">.</span><span class="i">Value</span>) <span class="k">then</span>
-                <span onmouseout="hideTip(event, 'fs52', 131)" onmouseover="showTip(event, 'fs52', 131)" class="f">failwith</span> (<span onmouseout="hideTip(event, 'fs53', 132)" onmouseover="showTip(event, 'fs53', 132)" class="f">sprintf</span> <span class="s">&quot;failed with source:</span><span class="e">\n</span><span class="s"></span><span class="pf">%s</span><span class="s"></span><span class="e">\n</span><span class="s">infoLog:</span><span class="e">\n</span><span class="s"></span><span class="pf">%s</span><span class="s">&quot;</span> <span onmouseout="hideTip(event, 'fs71', 133)" onmouseover="showTip(event, 'fs71', 133)" class="i">shaderSource</span> <span onmouseout="hideTip(event, 'fs72', 134)" onmouseover="showTip(event, 'fs72', 134)" class="i">shader</span><span class="o">.</span><span class="i">InfoLog</span>)
-            <span onmouseout="hideTip(event, 'fs72', 135)" onmouseover="showTip(event, 'fs72', 135)" class="i">shader</span>
-
-        <span class="k">let</span> <span onmouseout="hideTip(event, 'fs73', 136)" onmouseover="showTip(event, 'fs73', 136)" class="f">fragmentShader</span> <span onmouseout="hideTip(event, 'fs70', 137)" onmouseover="showTip(event, 'fs70', 137)" class="i">gl</span> <span onmouseout="hideTip(event, 'fs71', 138)" onmouseover="showTip(event, 'fs71', 138)" class="i">shaderSource</span> <span class="o">=</span>
-            <span class="k">let</span> <span onmouseout="hideTip(event, 'fs72', 139)" onmouseover="showTip(event, 'fs72', 139)" class="i">shader</span> <span class="o">=</span>  <span class="i">Shaders</span><span class="o">.</span><span class="i">FragmentShader</span>()
-            <span onmouseout="hideTip(event, 'fs72', 140)" onmouseover="showTip(event, 'fs72', 140)" class="i">shader</span><span class="o">.</span><span class="i">CreateInContext</span>(<span class="o">!</span><span onmouseout="hideTip(event, 'fs70', 141)" onmouseover="showTip(event, 'fs70', 141)" class="i">gl</span>)
-            <span onmouseout="hideTip(event, 'fs72', 142)" onmouseover="showTip(event, 'fs72', 142)" class="i">shader</span><span class="o">.</span><span class="i">SetSource</span>(<span onmouseout="hideTip(event, 'fs71', 143)" onmouseover="showTip(event, 'fs71', 143)" class="i">shaderSource</span>)
-            <span onmouseout="hideTip(event, 'fs72', 144)" onmouseover="showTip(event, 'fs72', 144)" class="i">shader</span><span class="o">.</span><span class="i">Compile</span>()
-            <span class="k">if</span> <span onmouseout="hideTip(event, 'fs51', 145)" onmouseover="showTip(event, 'fs51', 145)" class="f">not</span> (<span onmouseout="hideTip(event, 'fs72', 146)" onmouseover="showTip(event, 'fs72', 146)" class="i">shader</span><span class="o">.</span><span class="i">CompileStatus</span><span class="o">.</span><span class="i">HasValue</span>) <span class="k">then</span>
-                <span onmouseout="hideTip(event, 'fs52', 147)" onmouseover="showTip(event, 'fs52', 147)" class="f">failwith</span> (<span onmouseout="hideTip(event, 'fs53', 148)" onmouseover="showTip(event, 'fs53', 148)" class="f">sprintf</span> <span class="s">&quot;failed with source:</span><span class="e">\n</span><span class="s"> </span><span class="pf">%s</span><span class="s">&quot;</span> <span onmouseout="hideTip(event, 'fs71', 149)" onmouseover="showTip(event, 'fs71', 149)" class="i">shaderSource</span>)
-            <span class="k">if</span> <span onmouseout="hideTip(event, 'fs51', 150)" onmouseover="showTip(event, 'fs51', 150)" class="f">not</span> (<span onmouseout="hideTip(event, 'fs72', 151)" onmouseover="showTip(event, 'fs72', 151)" class="i">shader</span><span class="o">.</span><span class="i">CompileStatus</span><span class="o">.</span><span class="i">Value</span>) <span class="k">then</span>
-                <span onmouseout="hideTip(event, 'fs52', 152)" onmouseover="showTip(event, 'fs52', 152)" class="f">failwith</span> (<span onmouseout="hideTip(event, 'fs53', 153)" onmouseover="showTip(event, 'fs53', 153)" class="f">sprintf</span> <span class="s">&quot;failed with source:</span><span class="e">\n</span><span class="s"></span><span class="pf">%s</span><span class="s"></span><span class="e">\n</span><span class="s">infoLog:</span><span class="e">\n</span><span class="s"></span><span class="pf">%s</span><span class="s">&quot;</span> <span onmouseout="hideTip(event, 'fs71', 154)" onmouseover="showTip(event, 'fs71', 154)" class="i">shaderSource</span> <span onmouseout="hideTip(event, 'fs72', 155)" onmouseover="showTip(event, 'fs72', 155)" class="i">shader</span><span class="o">.</span><span class="i">InfoLog</span>)
-            <span onmouseout="hideTip(event, 'fs72', 156)" onmouseover="showTip(event, 'fs72', 156)" class="i">shader</span>
-
-        <span class="k">let</span> <span onmouseout="hideTip(event, 'fs74', 157)" onmouseover="showTip(event, 'fs74', 157)" class="i">pixelVertexShader</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs69', 158)" onmouseover="showTip(event, 'fs69', 158)" class="f">vertexShader</span> <span onmouseout="hideTip(event, 'fs55', 159)" onmouseover="showTip(event, 'fs55', 159)" class="v">gl</span> <span onmouseout="hideTip(event, 'fs61', 160)" onmouseover="showTip(event, 'fs61', 160)" class="i">vertexShaderCode</span>
-        <span class="k">let</span> <span onmouseout="hideTip(event, 'fs75', 161)" onmouseover="showTip(event, 'fs75', 161)" class="i">pixelFragmentShader</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs73', 162)" onmouseover="showTip(event, 'fs73', 162)" class="f">fragmentShader</span> <span onmouseout="hideTip(event, 'fs55', 163)" onmouseover="showTip(event, 'fs55', 163)" class="v">gl</span> <span onmouseout="hideTip(event, 'fs62', 164)" onmouseover="showTip(event, 'fs62', 164)" class="i">fragmentShaderCode</span>
-
-        <span onmouseout="hideTip(event, 'fs74', 165)" onmouseover="showTip(event, 'fs74', 165)" class="i">pixelVertexShader</span><span class="o">.</span><span class="i">IsEnabled</span> <span class="o">&lt;-</span> <span class="k">true</span>
-        <span onmouseout="hideTip(event, 'fs75', 166)" onmouseover="showTip(event, 'fs75', 166)" class="i">pixelFragmentShader</span><span class="o">.</span><span class="i">IsEnabled</span> <span class="o">&lt;-</span> <span class="k">true</span>
-
-        (<span class="o">!</span><span onmouseout="hideTip(event, 'fs55', 167)" onmouseover="showTip(event, 'fs55', 167)" class="v">gl</span>)<span class="o">.</span><span class="i">AttachShader</span> (<span onmouseout="hideTip(event, 'fs57', 168)" onmouseover="showTip(event, 'fs57', 168)" class="i">shaderProgram</span><span class="o">.</span><span class="i">ShaderProgramObject</span>, <span onmouseout="hideTip(event, 'fs74', 169)" onmouseover="showTip(event, 'fs74', 169)" class="i">pixelVertexShader</span><span class="o">.</span><span class="i">ShaderObject</span>)
-        (<span class="o">!</span><span onmouseout="hideTip(event, 'fs55', 170)" onmouseover="showTip(event, 'fs55', 170)" class="v">gl</span>)<span class="o">.</span><span class="i">AttachShader</span> (<span onmouseout="hideTip(event, 'fs57', 171)" onmouseover="showTip(event, 'fs57', 171)" class="i">shaderProgram</span><span class="o">.</span><span class="i">ShaderProgramObject</span>, <span onmouseout="hideTip(event, 'fs75', 172)" onmouseover="showTip(event, 'fs75', 172)" class="i">pixelFragmentShader</span><span class="o">.</span><span class="i">ShaderObject</span>)
-        (<span class="o">!</span><span onmouseout="hideTip(event, 'fs55', 173)" onmouseover="showTip(event, 'fs55', 173)" class="v">gl</span>)<span class="o">.</span><span class="i">LinkProgram</span> (<span onmouseout="hideTip(event, 'fs57', 174)" onmouseover="showTip(event, 'fs57', 174)" class="i">shaderProgram</span><span class="o">.</span><span class="i">ShaderProgramObject</span>)
-        (<span class="o">!</span><span onmouseout="hideTip(event, 'fs55', 175)" onmouseover="showTip(event, 'fs55', 175)" class="v">gl</span>)<span class="o">.</span><span class="i">DetachShader</span> (<span onmouseout="hideTip(event, 'fs57', 176)" onmouseover="showTip(event, 'fs57', 176)" class="i">shaderProgram</span><span class="o">.</span><span class="i">ShaderProgramObject</span>, <span onmouseout="hideTip(event, 'fs74', 177)" onmouseover="showTip(event, 'fs74', 177)" class="i">pixelVertexShader</span><span class="o">.</span><span class="i">ShaderObject</span>)
-        (<span class="o">!</span><span onmouseout="hideTip(event, 'fs55', 178)" onmouseover="showTip(event, 'fs55', 178)" class="v">gl</span>)<span class="o">.</span><span class="i">DetachShader</span> (<span onmouseout="hideTip(event, 'fs57', 179)" onmouseover="showTip(event, 'fs57', 179)" class="i">shaderProgram</span><span class="o">.</span><span class="i">ShaderProgramObject</span>, <span onmouseout="hideTip(event, 'fs75', 180)" onmouseover="showTip(event, 'fs75', 180)" class="i">pixelFragmentShader</span><span class="o">.</span><span class="i">ShaderObject</span>)
-
-        <span onmouseout="hideTip(event, 'fs74', 181)" onmouseover="showTip(event, 'fs74', 181)" class="i">pixelVertexShader</span>, <span onmouseout="hideTip(event, 'fs75', 182)" onmouseover="showTip(event, 'fs75', 182)" class="i">pixelFragmentShader</span>
-
-    <span class="c">// Generic event handler for resizing the SharpGL WPF control.</span>
+</code></pre></td>
+</tr>
+</table>
+<p>Registering an event handler for the OpenGL canvas, i.e. the OpenGLControl, the will provide interaction
+with the OpenGL engine. In this example, resizing the OpenGL control will be translated to an adaption of the
+2D function.</p>
+<table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l"> 1: </span>
+<span class="l"> 2: </span>
+<span class="l"> 3: </span>
+<span class="l"> 4: </span>
+<span class="l"> 5: </span>
+<span class="l"> 6: </span>
+<span class="l"> 7: </span>
+<span class="l"> 8: </span>
+<span class="l"> 9: </span>
+<span class="l">10: </span>
+<span class="l">11: </span>
+<span class="l">12: </span>
+<span class="l">13: </span>
+<span class="l">14: </span>
+<span class="l">15: </span>
+<span class="l">16: </span>
+<span class="l">17: </span>
+<span class="l">18: </span>
+<span class="l">19: </span>
+<span class="l">20: </span>
+<span class="l">21: </span>
+<span class="l">22: </span>
+<span class="l">23: </span>
+<span class="l">24: </span>
+<span class="l">25: </span>
+</pre></td>
+<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp">    <span class="c">/// Generic event handler for resizing the SharpGL WPF control.</span>
     <span class="k">static</span> <span class="k">member</span> <span onmouseout="hideTip(event, 'fs76', 183)" onmouseover="showTip(event, 'fs76', 183)" class="f">OnResized</span> (<span onmouseout="hideTip(event, 'fs77', 184)" onmouseover="showTip(event, 'fs77', 184)" class="i">sender</span> <span class="o">:</span> <span onmouseout="hideTip(event, 'fs49', 185)" onmouseover="showTip(event, 'fs49', 185)" class="t">obj</span>) (<span onmouseout="hideTip(event, 'fs78', 186)" onmouseover="showTip(event, 'fs78', 186)" class="i">args</span> <span class="o">:</span> <span class="i">OpenGLEventArgs</span>) <span class="o">=</span>
         <span class="c">//  Get the OpenGL instance.</span>
         <span class="k">let</span> <span onmouseout="hideTip(event, 'fs79', 187)" onmouseover="showTip(event, 'fs79', 187)" class="i">gl</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs78', 188)" onmouseover="showTip(event, 'fs78', 188)" class="i">args</span><span class="o">.</span><span class="i">OpenGL</span>
@@ -343,7 +243,7 @@ It will be further enhanced for managing shader programs.</p>
         <span class="c">//  Back to the modelview.</span>
         <span onmouseout="hideTip(event, 'fs79', 194)" onmouseover="showTip(event, 'fs79', 194)" class="i">gl</span><span class="o">.</span><span class="i">MatrixMode</span> (<span class="i">Enumerations</span><span class="o">.</span><span class="i">MatrixMode</span><span class="o">.</span><span class="i">Modelview</span>)
 
-    <span class="c">// Adapt the given 2D function to the given control size.</span>
+    <span class="c">/// Adapt the given 2D function to the given control size.</span>
     <span class="k">static</span> <span class="k">member</span> <span onmouseout="hideTip(event, 'fs80', 195)" onmouseover="showTip(event, 'fs80', 195)" class="f">Fun2D</span> <span onmouseout="hideTip(event, 'fs81', 196)" onmouseover="showTip(event, 'fs81', 196)" class="i">x0</span> <span onmouseout="hideTip(event, 'fs82', 197)" onmouseover="showTip(event, 'fs82', 197)" class="i">y0</span> <span onmouseout="hideTip(event, 'fs83', 198)" onmouseover="showTip(event, 'fs83', 198)" class="i">width</span> <span onmouseout="hideTip(event, 'fs84', 199)" onmouseover="showTip(event, 'fs84', 199)" class="i">height</span> <span onmouseout="hideTip(event, 'fs85', 200)" onmouseover="showTip(event, 'fs85', 200)" class="i">xmin</span> <span onmouseout="hideTip(event, 'fs86', 201)" onmouseover="showTip(event, 'fs86', 201)" class="i">xmax</span> <span onmouseout="hideTip(event, 'fs87', 202)" onmouseover="showTip(event, 'fs87', 202)" class="i">dx</span> (<span onmouseout="hideTip(event, 'fs88', 203)" onmouseover="showTip(event, 'fs88', 203)" class="f">f</span> <span class="o">:</span> <span onmouseout="hideTip(event, 'fs89', 204)" onmouseover="showTip(event, 'fs89', 204)" class="t">float</span> <span class="k">-&gt;</span> <span onmouseout="hideTip(event, 'fs89', 205)" onmouseover="showTip(event, 'fs89', 205)" class="t">float</span>) <span class="o">=</span>
         <span class="k">let</span> <span onmouseout="hideTip(event, 'fs90', 206)" onmouseover="showTip(event, 'fs90', 206)" class="i">fx</span> <span class="o">=</span> [| <span class="k">for</span> <span onmouseout="hideTip(event, 'fs91', 207)" onmouseover="showTip(event, 'fs91', 207)" class="i">x</span> <span class="k">in</span> [<span onmouseout="hideTip(event, 'fs85', 208)" onmouseover="showTip(event, 'fs85', 208)" class="i">xmin</span> <span class="o">..</span> (<span onmouseout="hideTip(event, 'fs86', 209)" onmouseover="showTip(event, 'fs86', 209)" class="i">xmax</span> <span class="o">-</span> <span onmouseout="hideTip(event, 'fs85', 210)" onmouseover="showTip(event, 'fs85', 210)" class="i">xmin</span>)<span class="o">*</span><span onmouseout="hideTip(event, 'fs87', 211)" onmouseover="showTip(event, 'fs87', 211)" class="i">dx</span> <span class="f">..</span> <span onmouseout="hideTip(event, 'fs86', 212)" onmouseover="showTip(event, 'fs86', 212)" class="i">xmax</span>] <span class="k">do</span> <span class="k">yield</span> <span onmouseout="hideTip(event, 'fs91', 213)" onmouseover="showTip(event, 'fs91', 213)" class="i">x</span>, <span onmouseout="hideTip(event, 'fs88', 214)" onmouseover="showTip(event, 'fs88', 214)" class="f">f</span> <span onmouseout="hideTip(event, 'fs91', 215)" onmouseover="showTip(event, 'fs91', 215)" class="i">x</span>; <span class="k">yield</span> <span onmouseout="hideTip(event, 'fs86', 216)" onmouseover="showTip(event, 'fs86', 216)" class="i">xmax</span>,<span onmouseout="hideTip(event, 'fs88', 217)" onmouseover="showTip(event, 'fs88', 217)" class="f">f</span> <span onmouseout="hideTip(event, 'fs86', 218)" onmouseover="showTip(event, 'fs86', 218)" class="i">xmax</span> |]
         <span class="k">let</span> <span onmouseout="hideTip(event, 'fs92', 219)" onmouseover="showTip(event, 'fs92', 219)" class="i">ymin</span>, <span onmouseout="hideTip(event, 'fs93', 220)" onmouseover="showTip(event, 'fs93', 220)" class="i">ymax</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs90', 221)" onmouseover="showTip(event, 'fs90', 221)" class="i">fx</span> <span class="o">|&gt;</span> <span onmouseout="hideTip(event, 'fs94', 222)" onmouseover="showTip(event, 'fs94', 222)" class="t">Array</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs95', 223)" onmouseover="showTip(event, 'fs95', 223)" class="f">map</span> (<span class="k">fun</span> (<span onmouseout="hideTip(event, 'fs91', 224)" onmouseover="showTip(event, 'fs91', 224)" class="i">x</span>,<span onmouseout="hideTip(event, 'fs96', 225)" onmouseover="showTip(event, 'fs96', 225)" class="i">y</span>) <span class="k">-&gt;</span> <span onmouseout="hideTip(event, 'fs96', 226)" onmouseover="showTip(event, 'fs96', 226)" class="i">y</span>) <span class="o">|&gt;</span> <span class="k">fun</span> <span onmouseout="hideTip(event, 'fs97', 227)" onmouseover="showTip(event, 'fs97', 227)" class="i">y</span> <span class="k">-&gt;</span> (<span onmouseout="hideTip(event, 'fs97', 228)" onmouseover="showTip(event, 'fs97', 228)" class="i">y</span> <span class="o">|&gt;</span> <span onmouseout="hideTip(event, 'fs94', 229)" onmouseover="showTip(event, 'fs94', 229)" class="t">Array</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs98', 230)" onmouseover="showTip(event, 'fs98', 230)" class="f">min</span>), (<span onmouseout="hideTip(event, 'fs97', 231)" onmouseover="showTip(event, 'fs97', 231)" class="i">y</span> <span class="o">|&gt;</span> <span onmouseout="hideTip(event, 'fs94', 232)" onmouseover="showTip(event, 'fs94', 232)" class="t">Array</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs99', 233)" onmouseover="showTip(event, 'fs99', 233)" class="f">max</span>)
@@ -355,16 +255,50 @@ It will be further enhanced for managing shader programs.</p>
             <span class="c">//a*ymin+b -&gt; y0+heigth</span>
             <span class="c">//a*ymax+b -&gt; y0</span>
             <span onmouseout="hideTip(event, 'fs82', 245)" onmouseover="showTip(event, 'fs82', 245)" class="i">y0</span> <span class="o">+</span> (<span onmouseout="hideTip(event, 'fs93', 246)" onmouseover="showTip(event, 'fs93', 246)" class="i">ymax</span> <span class="o">-</span> <span onmouseout="hideTip(event, 'fs96', 247)" onmouseover="showTip(event, 'fs96', 247)" class="i">y</span>)<span class="o">*</span><span onmouseout="hideTip(event, 'fs84', 248)" onmouseover="showTip(event, 'fs84', 248)" class="i">height</span><span class="o">/</span>(<span onmouseout="hideTip(event, 'fs93', 249)" onmouseover="showTip(event, 'fs93', 249)" class="i">ymax</span> <span class="o">-</span> <span onmouseout="hideTip(event, 'fs92', 250)" onmouseover="showTip(event, 'fs92', 250)" class="i">ymin</span>))
+</code></pre></td>
+</tr>
+</table>
+<p>For this example it suffice that the vertex and fragment shaders only pass the data through the OpenGL pipeline
+without further manipulation by its own.</p>
+<table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l"> 1: </span>
+<span class="l"> 2: </span>
+<span class="l"> 3: </span>
+<span class="l"> 4: </span>
+<span class="l"> 5: </span>
+<span class="l"> 6: </span>
+<span class="l"> 7: </span>
+<span class="l"> 8: </span>
+<span class="l"> 9: </span>
+<span class="l">10: </span>
+<span class="l">11: </span>
+<span class="l">12: </span>
+<span class="l">13: </span>
+<span class="l">14: </span>
+<span class="l">15: </span>
+<span class="l">16: </span>
+<span class="l">17: </span>
+<span class="l">18: </span>
+<span class="l">19: </span>
+</pre></td>
+<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp">    <span class="k">let</span> <span onmouseout="hideTip(event, 'fs111', 262)" onmouseover="showTip(event, 'fs111', 262)" class="i">vertexShaderCode</span> <span class="o">=</span>
+        <span class="s">&quot;&quot;&quot;</span>
+<span class="s">        #version 140</span>
+<span class="s">        in vec4 Position;</span>
+<span class="s">        void main()</span>
+<span class="s">        {</span>
+<span class="s">        	gl_Position = Position;</span>
+<span class="s">        }</span>
+<span class="s">        &quot;&quot;&quot;</span>
 
-    <span class="c">// Define RGB color codes.</span>
-    <span class="k">static</span> <span class="k">member</span> <span onmouseout="hideTip(event, 'fs100', 251)" onmouseover="showTip(event, 'fs100', 251)" class="i">Black</span>   <span class="o">=</span> [| <span class="n">0.0f</span>; <span class="n">0.0f</span>; <span class="n">0.0f</span> |]
-    <span class="k">static</span> <span class="k">member</span> <span onmouseout="hideTip(event, 'fs101', 252)" onmouseover="showTip(event, 'fs101', 252)" class="i">Red</span>     <span class="o">=</span> [| <span class="n">1.0f</span>; <span class="n">0.0f</span>; <span class="n">0.0f</span> |]
-    <span class="k">static</span> <span class="k">member</span> <span onmouseout="hideTip(event, 'fs102', 253)" onmouseover="showTip(event, 'fs102', 253)" class="i">Green</span>   <span class="o">=</span> [| <span class="n">0.0f</span>; <span class="n">1.0f</span>; <span class="n">0.0f</span> |]
-    <span class="k">static</span> <span class="k">member</span> <span onmouseout="hideTip(event, 'fs103', 254)" onmouseover="showTip(event, 'fs103', 254)" class="i">Yellow</span>  <span class="o">=</span> [| <span class="n">1.0f</span>; <span class="n">1.0f</span>; <span class="n">0.0f</span> |]
-    <span class="k">static</span> <span class="k">member</span> <span onmouseout="hideTip(event, 'fs104', 255)" onmouseover="showTip(event, 'fs104', 255)" class="i">Blue</span>    <span class="o">=</span> [| <span class="n">0.0f</span>; <span class="n">0.0f</span>; <span class="n">1.0f</span> |]
-    <span class="k">static</span> <span class="k">member</span> <span onmouseout="hideTip(event, 'fs105', 256)" onmouseover="showTip(event, 'fs105', 256)" class="i">Magenta</span> <span class="o">=</span> [| <span class="n">1.0f</span>; <span class="n">0.0f</span>; <span class="n">1.0f</span> |]
-    <span class="k">static</span> <span class="k">member</span> <span onmouseout="hideTip(event, 'fs106', 257)" onmouseover="showTip(event, 'fs106', 257)" class="i">Cyan</span>    <span class="o">=</span> [| <span class="n">0.0f</span>; <span class="n">1.0f</span>; <span class="n">1.0f</span> |]
-    <span class="k">static</span> <span class="k">member</span> <span onmouseout="hideTip(event, 'fs107', 258)" onmouseover="showTip(event, 'fs107', 258)" class="i">White</span>   <span class="o">=</span> [| <span class="n">1.0f</span>; <span class="n">1.0f</span>; <span class="n">1.0f</span> |]
+    <span class="k">let</span> <span onmouseout="hideTip(event, 'fs112', 263)" onmouseover="showTip(event, 'fs112', 263)" class="i">fragmentShaderCode</span> <span class="o">=</span>
+        <span class="s">&quot;&quot;&quot;</span>
+<span class="s">        #version 140</span>
+<span class="s">        out vec4 fColor;</span>
+<span class="s">        void main()</span>
+<span class="s">        {</span>
+<span class="s">	        fColor = vec4(0.f,0.6f,0.8f,0.5f);</span>
+<span class="s">        }</span>
+<span class="s">        &quot;&quot;&quot;</span>
 </code></pre></td>
 </tr>
 </table>
@@ -556,7 +490,7 @@ enhanced OpenGL features of the shader pipeline. I will sum up this in another p
 <div class="tip" id="fs15">namespace Microsoft.FSharp.Core</div>
 <div class="tip" id="fs16">Multiple items<br />namespace System.Windows.Controls.Primitives<br /><br />--------------------<br />namespace System.Windows.Markup.Primitives</div>
 <div class="tip" id="fs17">type Base =<br />&#160;&#160;static member Fun2D : x0:float -&gt; y0:float -&gt; width:float -&gt; height:float -&gt; xmin:float -&gt; xmax:float -&gt; dx:float -&gt; f:(float -&gt; float) -&gt; (float * float) []<br />&#160;&#160;static member Init : gl:&#39;c ref -&gt; shaderProgram:&#39;d -&gt; attributeLocations:Dictionary&lt;uint32,string&gt; -&gt; vertexShaderCode:string -&gt; fragmentShaderCode:string -&gt; &#39;e * &#39;f<br />&#160;&#160;static member LoadManifestResource : textFileName:string -&gt; string<br />&#160;&#160;static member LoadTextFile : textFileName:string -&gt; string<br />&#160;&#160;static member OnResized : sender:obj -&gt; args:&#39;a -&gt; &#39;b<br />&#160;&#160;static member OpenGL : openGLVersion:&#39;g -&gt; renderContextType:&#39;h -&gt; width:&#39;i -&gt; height:&#39;j -&gt; bitDepth:&#39;k -&gt; parameters:obj -&gt; &#39;l<br />&#160;&#160;static member Black : float32 []<br />&#160;&#160;static member Blue : float32 []<br />&#160;&#160;static member Cyan : float32 []<br />&#160;&#160;static member Green : float32 []<br />&#160;&#160;...<br /><br />Full name: SharpGLTemplate.Base</div>
-<div class="tip" id="fs18">static member Base.LoadManifestResource : textFileName:string -&gt; string<br /><br />Full name: SharpGLTemplate.Base.LoadManifestResource</div>
+<div class="tip" id="fs18">static member Base.LoadManifestResource : textFileName:string -&gt; string<br /><br />Full name: SharpGLTemplate.Base.LoadManifestResource<br /><em><br /><br />&#160;Load the shader sourcecode from the named manifest resource.</em></div>
 <div class="tip" id="fs19">val textFileName : string</div>
 <div class="tip" id="fs20">Multiple items<br />val string : value:&#39;T -&gt; string<br /><br />Full name: Microsoft.FSharp.Core.Operators.string<br /><br />--------------------<br />type string = String<br /><br />Full name: Microsoft.FSharp.Core.string</div>
 <div class="tip" id="fs21">val executingAssembly : Assembly</div>
@@ -573,13 +507,13 @@ enhanced OpenGL features of the shader pipeline. I will sum up this in another p
 <div class="tip" id="fs32">val reader : StreamReader</div>
 <div class="tip" id="fs33">Multiple items<br />type StreamReader =<br />&#160;&#160;inherit TextReader<br />&#160;&#160;new : stream:Stream -&gt; StreamReader + 9 overloads<br />&#160;&#160;member BaseStream : Stream<br />&#160;&#160;member Close : unit -&gt; unit<br />&#160;&#160;member CurrentEncoding : Encoding<br />&#160;&#160;member DiscardBufferedData : unit -&gt; unit<br />&#160;&#160;member EndOfStream : bool<br />&#160;&#160;member Peek : unit -&gt; int<br />&#160;&#160;member Read : unit -&gt; int + 1 overload<br />&#160;&#160;member ReadLine : unit -&gt; string<br />&#160;&#160;member ReadToEnd : unit -&gt; string<br />&#160;&#160;...<br /><br />Full name: System.IO.StreamReader<br /><br />--------------------<br />StreamReader(stream: Stream) : unit<br />StreamReader(path: string) : unit<br />StreamReader(stream: Stream, detectEncodingFromByteOrderMarks: bool) : unit<br />StreamReader(stream: Stream, encoding: Text.Encoding) : unit<br />StreamReader(path: string, detectEncodingFromByteOrderMarks: bool) : unit<br />StreamReader(path: string, encoding: Text.Encoding) : unit<br />StreamReader(stream: Stream, encoding: Text.Encoding, detectEncodingFromByteOrderMarks: bool) : unit<br />StreamReader(path: string, encoding: Text.Encoding, detectEncodingFromByteOrderMarks: bool) : unit<br />StreamReader(stream: Stream, encoding: Text.Encoding, detectEncodingFromByteOrderMarks: bool, bufferSize: int) : unit<br />StreamReader(path: string, encoding: Text.Encoding, detectEncodingFromByteOrderMarks: bool, bufferSize: int) : unit</div>
 <div class="tip" id="fs34">StreamReader.ReadToEnd() : string</div>
-<div class="tip" id="fs35">static member Base.LoadTextFile : textFileName:string -&gt; string<br /><br />Full name: SharpGLTemplate.Base.LoadTextFile</div>
+<div class="tip" id="fs35">static member Base.LoadTextFile : textFileName:string -&gt; string<br /><br />Full name: SharpGLTemplate.Base.LoadTextFile<br /><em><br /><br />&#160;Load the shader sourcecode from the text file.</em></div>
 <div class="tip" id="fs36">Multiple items<br />type Regex =<br />&#160;&#160;new : pattern:string -&gt; Regex + 1 overload<br />&#160;&#160;member GetGroupNames : unit -&gt; string[]<br />&#160;&#160;member GetGroupNumbers : unit -&gt; int[]<br />&#160;&#160;member GroupNameFromNumber : i:int -&gt; string<br />&#160;&#160;member GroupNumberFromName : name:string -&gt; int<br />&#160;&#160;member IsMatch : input:string -&gt; bool + 1 overload<br />&#160;&#160;member Match : input:string -&gt; Match + 2 overloads<br />&#160;&#160;member Matches : input:string -&gt; MatchCollection + 1 overload<br />&#160;&#160;member Options : RegexOptions<br />&#160;&#160;member Replace : input:string * replacement:string -&gt; string + 5 overloads<br />&#160;&#160;...<br /><br />Full name: System.Text.RegularExpressions.Regex<br /><br />--------------------<br />Regex(pattern: string) : unit<br />Regex(pattern: string, options: RegexOptions) : unit</div>
 <div class="tip" id="fs37">type File =<br />&#160;&#160;static member AppendAllLines : path:string * contents:IEnumerable&lt;string&gt; -&gt; unit + 1 overload<br />&#160;&#160;static member AppendAllText : path:string * contents:string -&gt; unit + 1 overload<br />&#160;&#160;static member AppendText : path:string -&gt; StreamWriter<br />&#160;&#160;static member Copy : sourceFileName:string * destFileName:string -&gt; unit + 1 overload<br />&#160;&#160;static member Create : path:string -&gt; FileStream + 3 overloads<br />&#160;&#160;static member CreateText : path:string -&gt; StreamWriter<br />&#160;&#160;static member Decrypt : path:string -&gt; unit<br />&#160;&#160;static member Delete : path:string -&gt; unit<br />&#160;&#160;static member Encrypt : path:string -&gt; unit<br />&#160;&#160;static member Exists : path:string -&gt; bool<br />&#160;&#160;...<br /><br />Full name: System.IO.File</div>
 <div class="tip" id="fs38">File.ReadAllText(path: string) : string<br />File.ReadAllText(path: string, encoding: Text.Encoding) : string</div>
 <div class="tip" id="fs39">Multiple items<br />type Path =<br />&#160;&#160;inherit Shape<br />&#160;&#160;new : unit -&gt; Path<br />&#160;&#160;member Data : Geometry with get, set<br />&#160;&#160;static val DataProperty : DependencyProperty<br /><br />Full name: System.Windows.Shapes.Path<br /><br />--------------------<br />Path() : unit</div>
 <div class="tip" id="fs40">Path.Combine([&lt;ParamArray&gt;] paths: string []) : string<br />Path.Combine(path1: string, path2: string) : string<br />Path.Combine(path1: string, path2: string, path3: string) : string<br />Path.Combine(path1: string, path2: string, path3: string, path4: string) : string</div>
-<div class="tip" id="fs41">static member Base.OpenGL : openGLVersion:&#39;g -&gt; renderContextType:&#39;h -&gt; width:&#39;i -&gt; height:&#39;j -&gt; bitDepth:&#39;k -&gt; parameters:obj -&gt; &#39;l<br /><br />Full name: SharpGLTemplate.Base.OpenGL</div>
+<div class="tip" id="fs41">static member Base.OpenGL : openGLVersion:&#39;g -&gt; renderContextType:&#39;h -&gt; width:&#39;i -&gt; height:&#39;j -&gt; bitDepth:&#39;k -&gt; parameters:obj -&gt; &#39;l<br /><br />Full name: SharpGLTemplate.Base.OpenGL<br /><em><br /><br />&#160;Create an OpenGL instance of named version, otherwise throw an exception.<br />&#160;https://github.com/mattdesl/lwjgl-basics/wiki/GLSL-Versions </em></div>
 <div class="tip" id="fs42">val openGLVersion : &#39;g</div>
 <div class="tip" id="fs43">Multiple items<br />type Version =<br />&#160;&#160;new : unit -&gt; Version + 4 overloads<br />&#160;&#160;member Build : int<br />&#160;&#160;member Clone : unit -&gt; obj<br />&#160;&#160;member CompareTo : version:obj -&gt; int + 1 overload<br />&#160;&#160;member Equals : obj:obj -&gt; bool + 1 overload<br />&#160;&#160;member GetHashCode : unit -&gt; int<br />&#160;&#160;member Major : int<br />&#160;&#160;member MajorRevision : int16<br />&#160;&#160;member Minor : int<br />&#160;&#160;member MinorRevision : int16<br />&#160;&#160;...<br /><br />Full name: System.Version<br /><br />--------------------<br />Version() : unit<br />Version(version: string) : unit<br />Version(major: int, minor: int) : unit<br />Version(major: int, minor: int, build: int) : unit<br />Version(major: int, minor: int, build: int, revision: int) : unit</div>
 <div class="tip" id="fs44">val renderContextType : &#39;h</div>
@@ -592,7 +526,7 @@ enhanced OpenGL features of the shader pipeline. I will sum up this in another p
 <div class="tip" id="fs51">val not : value:bool -&gt; bool<br /><br />Full name: Microsoft.FSharp.Core.Operators.not</div>
 <div class="tip" id="fs52">val failwith : message:string -&gt; &#39;T<br /><br />Full name: Microsoft.FSharp.Core.Operators.failwith</div>
 <div class="tip" id="fs53">val sprintf : format:Printf.StringFormat&lt;&#39;T&gt; -&gt; &#39;T<br /><br />Full name: Microsoft.FSharp.Core.ExtraTopLevelOperators.sprintf</div>
-<div class="tip" id="fs54">static member Base.Init : gl:&#39;c ref -&gt; shaderProgram:&#39;d -&gt; attributeLocations:Dictionary&lt;uint32,string&gt; -&gt; vertexShaderCode:string -&gt; fragmentShaderCode:string -&gt; &#39;e * &#39;f<br /><br />Full name: SharpGLTemplate.Base.Init</div>
+<div class="tip" id="fs54">static member Base.Init : gl:&#39;c ref -&gt; shaderProgram:&#39;d -&gt; attributeLocations:Dictionary&lt;uint32,string&gt; -&gt; vertexShaderCode:string -&gt; fragmentShaderCode:string -&gt; &#39;e * &#39;f<br /><br />Full name: SharpGLTemplate.Base.Init<br /><em><br /><br />&#160;Called after the window and OpenGL are initialized. Called exactly once, before the main loop.</em></div>
 <div class="tip" id="fs55">val gl : &#39;c ref</div>
 <div class="tip" id="fs56">Multiple items<br />val ref : value:&#39;T -&gt; &#39;T ref<br /><br />Full name: Microsoft.FSharp.Core.Operators.ref<br /><br />--------------------<br />type &#39;T ref = Ref&lt;&#39;T&gt;<br /><br />Full name: Microsoft.FSharp.Core.ref&lt;_&gt;</div>
 <div class="tip" id="fs57">val shaderProgram : &#39;d</div>
@@ -614,11 +548,11 @@ enhanced OpenGL features of the shader pipeline. I will sum up this in another p
 <div class="tip" id="fs73">val fragmentShader : (&#39;a -&gt; string -&gt; &#39;b)</div>
 <div class="tip" id="fs74">val pixelVertexShader : &#39;e</div>
 <div class="tip" id="fs75">val pixelFragmentShader : &#39;f</div>
-<div class="tip" id="fs76">static member Base.OnResized : sender:obj -&gt; args:&#39;a -&gt; &#39;b<br /><br />Full name: SharpGLTemplate.Base.OnResized</div>
+<div class="tip" id="fs76">static member Base.OnResized : sender:obj -&gt; args:&#39;a -&gt; &#39;b<br /><br />Full name: SharpGLTemplate.Base.OnResized<br /><em><br /><br />&#160;Generic event handler for resizing the SharpGL WPF control.</em></div>
 <div class="tip" id="fs77">val sender : obj</div>
 <div class="tip" id="fs78">val args : &#39;a</div>
 <div class="tip" id="fs79">val gl : obj</div>
-<div class="tip" id="fs80">static member Base.Fun2D : x0:float -&gt; y0:float -&gt; width:float -&gt; height:float -&gt; xmin:float -&gt; xmax:float -&gt; dx:float -&gt; f:(float -&gt; float) -&gt; (float * float) []<br /><br />Full name: SharpGLTemplate.Base.Fun2D</div>
+<div class="tip" id="fs80">static member Base.Fun2D : x0:float -&gt; y0:float -&gt; width:float -&gt; height:float -&gt; xmin:float -&gt; xmax:float -&gt; dx:float -&gt; f:(float -&gt; float) -&gt; (float * float) []<br /><br />Full name: SharpGLTemplate.Base.Fun2D<br /><em><br /><br />&#160;Adapt the given 2D function to the given control size.</em></div>
 <div class="tip" id="fs81">val x0 : float</div>
 <div class="tip" id="fs82">val y0 : float</div>
 <div class="tip" id="fs83">val width : float</div>
@@ -638,7 +572,7 @@ enhanced OpenGL features of the shader pipeline. I will sum up this in another p
 <div class="tip" id="fs97">val y : float []</div>
 <div class="tip" id="fs98">val min : array:&#39;T [] -&gt; &#39;T (requires comparison)<br /><br />Full name: Microsoft.FSharp.Collections.Array.min</div>
 <div class="tip" id="fs99">val max : array:&#39;T [] -&gt; &#39;T (requires comparison)<br /><br />Full name: Microsoft.FSharp.Collections.Array.max</div>
-<div class="tip" id="fs100">static member Base.Black : float32 []<br /><br />Full name: SharpGLTemplate.Base.Black</div>
+<div class="tip" id="fs100">static member Base.Black : float32 []<br /><br />Full name: SharpGLTemplate.Base.Black<br /><em><br /><br />&#160;Define RGB color codes.</em></div>
 <div class="tip" id="fs101">static member Base.Red : float32 []<br /><br />Full name: SharpGLTemplate.Base.Red</div>
 <div class="tip" id="fs102">static member Base.Green : float32 []<br /><br />Full name: SharpGLTemplate.Base.Green</div>
 <div class="tip" id="fs103">static member Base.Yellow : float32 []<br /><br />Full name: SharpGLTemplate.Base.Yellow</div>
@@ -672,7 +606,7 @@ enhanced OpenGL features of the shader pipeline. I will sum up this in another p
 <div class="tip" id="fs131">val Init : gl:&#39;a -&gt; &#39;b<br /><br />Full name: SharpGLTemplate.Main.Init</div>
 <div class="tip" id="fs132">val BlueRect : gl:&#39;a -&gt; &#39;b<br /><br />Full name: SharpGLTemplate.Main.BlueRect</div>
 <div class="tip" id="fs133">type Color =<br />&#160;&#160;struct<br />&#160;&#160;&#160;&#160;member A : byte with get, set<br />&#160;&#160;&#160;&#160;member B : byte with get, set<br />&#160;&#160;&#160;&#160;member Clamp : unit -&gt; unit<br />&#160;&#160;&#160;&#160;member ColorContext : ColorContext<br />&#160;&#160;&#160;&#160;member Equals : color:Color -&gt; bool + 1 overload<br />&#160;&#160;&#160;&#160;member G : byte with get, set<br />&#160;&#160;&#160;&#160;member GetHashCode : unit -&gt; int<br />&#160;&#160;&#160;&#160;member GetNativeColorValues : unit -&gt; float32[]<br />&#160;&#160;&#160;&#160;member R : byte with get, set<br />&#160;&#160;&#160;&#160;member ScA : float32 with get, set<br />&#160;&#160;&#160;&#160;...<br />&#160;&#160;end<br /><br />Full name: System.Windows.Media.Color</div>
-<div class="tip" id="fs134">static member Base.Fun2D : x0:float -&gt; y0:float -&gt; width:float -&gt; height:float -&gt; xmin:float -&gt; xmax:float -&gt; dx:float -&gt; f:(float -&gt; float) -&gt; (float * float) []</div>
+<div class="tip" id="fs134">static member Base.Fun2D : x0:float -&gt; y0:float -&gt; width:float -&gt; height:float -&gt; xmin:float -&gt; xmax:float -&gt; dx:float -&gt; f:(float -&gt; float) -&gt; (float * float) []<br /><em><br /><br />&#160;Adapt the given 2D function to the given control size.</em></div>
 <div class="tip" id="fs135">type Math =<br />&#160;&#160;static val PI : float<br />&#160;&#160;static val E : float<br />&#160;&#160;static member Abs : value:sbyte -&gt; sbyte + 6 overloads<br />&#160;&#160;static member Acos : d:float -&gt; float<br />&#160;&#160;static member Asin : d:float -&gt; float<br />&#160;&#160;static member Atan : d:float -&gt; float<br />&#160;&#160;static member Atan2 : y:float * x:float -&gt; float<br />&#160;&#160;static member BigMul : a:int * b:int -&gt; int64<br />&#160;&#160;static member Ceiling : d:decimal -&gt; decimal + 1 overload<br />&#160;&#160;static member Cos : d:float -&gt; float<br />&#160;&#160;...<br /><br />Full name: System.Math</div>
 <div class="tip" id="fs136">field Math.PI = 3.14159265359</div>
 <div class="tip" id="fs137">Math.Sin(a: float) : float</div>
@@ -708,7 +642,7 @@ enhanced OpenGL features of the shader pipeline. I will sum up this in another p
 <div class="tip" id="fs167">module Globals<br /><br />from SharpGLTemplate</div>
 <div class="tip" id="fs168">val box : value:&#39;T -&gt; obj<br /><br />Full name: Microsoft.FSharp.Core.Operators.box</div>
 <div class="tip" id="fs169">val x : bool</div>
-<div class="tip" id="fs170">static member Base.OnResized : sender:obj -&gt; args:&#39;a -&gt; &#39;b</div>
+<div class="tip" id="fs170">static member Base.OnResized : sender:obj -&gt; args:&#39;a -&gt; &#39;b<br /><em><br /><br />&#160;Generic event handler for resizing the SharpGL WPF control.</em></div>
 <div class="tip" id="fs171">property Window.Title: string</div>
 <div class="tip" id="fs172">module Main<br /><br />from SharpGLTemplate</div>
 <div class="tip" id="fs173">val Window : unit -&gt; Window<br /><br />Full name: SharpGLTemplate.Main.Window</div>
