@@ -8,19 +8,18 @@
 The purpose of this F# script is to provide the necessary plumbing for using OpenGL within WPF. The canonical
 approach for embedding OpenGL in the window management system is based on the platform-independant C/C++ library GLUT.
 GLUT is QT based while I was heading for a WPF solution. Without further investigation on OpenTK and other
-alternatives, I picked up Dave Kerr´s [SharpGL](https://github.com/dwmkerr/sharpgl).
+alternatives based on first impression, I picked up Dave Kerr´s [SharpGL](https://github.com/dwmkerr/sharpgl).
 
 ### Hardware Support for OpenGL 3.1
 
-Although quite a bit outdated compared to the current version of OpenGL 4.4, I had to resort to OpenGL 3.1 because of
-limitations imposed by the laptops I have in dayly use (not bleeding edge but decent enterprisy Lenovos).
-Another aspect is that OpenGL 3.1 correlates to the current OpenGL ES version of mobile platforms, namely on iPhone OS and
-Android.
+Although quite a bit outdated compared to the current version of OpenGL 4.4, OpenGL 3.1 was the desired option because of
+limitations imposed by the - not actually outdated - laptops I have in dayly use. Another reason to look at OpenGL 3.1 is 
+that correlates to the current OpenGL ES version of mobile platforms, namely on iPhone OS and Android.
 
 ## Dependencies
 
-I built the current [SharpGL](https://github.com/dwmkerr/sharpgl) version easily from scratch using the provided build
-script. Otherwise, standard WPF/.NET libraries are referenced.
+Building the current [SharpGL](https://github.com/dwmkerr/sharpgl) version from scratch is easily done using the provided build
+script. These dll files and the standard WPF/.NET libraries are referenced.
 
 *)
 #r "PresentationCore.dll";;
@@ -28,7 +27,6 @@ script. Otherwise, standard WPF/.NET libraries are referenced.
 #r "System.Xaml.dll";;
 #r "WindowsBase.dll";;
 #r "UIAutomationTypes";;
-
 
 #r @"SharpGL.WPF.2.4.0.0\SharpGL.dll"
 #r @"SharpGL.WPF.2.4.0.0\SharpGL.WPF.dll"
@@ -69,8 +67,7 @@ It will be further enhanced for managing shader programs.
 
 *)
 type Base =
-    (*** hide ***)
-    // Load the shader sourcecode from the named manifest resource.
+    /// Load the shader sourcecode from the named manifest resource.
     static member LoadManifestResource (textFileName : string) =
         let executingAssembly = Assembly.GetExecutingAssembly()
         let pathToDots = textFileName.Replace("\\", ".")
@@ -79,16 +76,17 @@ type Base =
         use stream = executingAssembly.GetManifestResourceStream(location)
         use reader = new StreamReader(stream)
         reader.ReadToEnd()
-    (*** hide ***)
-    // Load the shader sourcecode from the text file.
+    
+    /// Load the shader sourcecode from the text file.
     static member LoadTextFile (textFileName : string) =
         if Regex(@"^(([a-zA-Z]:\\)|([a-zA-Z]://)|(//)).*").IsMatch(textFileName) then
             File.ReadAllText(textFileName)
         else
             File.ReadAllText(Path.Combine(__SOURCE_DIRECTORY__, textFileName))
 
-    // Create an OpenGL instance of named version, otherwise throw an exception.
-    // https://github.com/mattdesl/lwjgl-basics/wiki/GLSL-Versions
+ 
+    /// Create an OpenGL instance of named version, otherwise throw an exception.
+    /// https://github.com/mattdesl/lwjgl-basics/wiki/GLSL-Versions 
     static member OpenGL (openGLVersion : Version.OpenGLVersion)
                          (renderContextType : RenderContextType)
                          width height bitDepth
@@ -100,8 +98,9 @@ type Base =
                           parameters)) then
             failwith (sprintf "Base.glCreate SharpGL.Version.OpenGLVersion %A" openGLVersion)
         gl
-    (*** hide ***)
-    // Called after the window and OpenGL are initialized. Called exactly once, before the main loop.
+
+(*** hide ***)
+    /// Called after the window and OpenGL are initialized. Called exactly once, before the main loop.
     static member Init (gl : OpenGL ref)
              (shaderProgram : ShaderProgram)
              (attributeLocations : Dictionary<uint32, string>)
@@ -141,13 +140,18 @@ type Base =
 
         (!gl).AttachShader (shaderProgram.ShaderProgramObject, pixelVertexShader.ShaderObject)
         (!gl).AttachShader (shaderProgram.ShaderProgramObject, pixelFragmentShader.ShaderObject)
-        (!gl).LinkProgram (shaderProgram.ShaderProgramObject)
+        (!gl).LinkProgram  (shaderProgram.ShaderProgramObject)
         (!gl).DetachShader (shaderProgram.ShaderProgramObject, pixelVertexShader.ShaderObject)
         (!gl).DetachShader (shaderProgram.ShaderProgramObject, pixelFragmentShader.ShaderObject)
 
         pixelVertexShader, pixelFragmentShader
 
-    // Generic event handler for resizing the SharpGL WPF control.
+(**
+Registering an event handler for the OpenGL canvas, i.e. the OpenGLControl, the will provide interaction 
+with the OpenGL engine. In this example, resizing the OpenGL control will be translated to an adaption of the 
+2D function. 
+*)
+    /// Generic event handler for resizing the SharpGL WPF control.
     static member OnResized (sender : obj) (args : OpenGLEventArgs) =
         //  Get the OpenGL instance.
         let gl = args.OpenGL
@@ -160,7 +164,7 @@ type Base =
         //  Back to the modelview.
         gl.MatrixMode (Enumerations.MatrixMode.Modelview)
 
-    // Adapt the given 2D function to the given control size.
+    /// Adapt the given 2D function to the given control size.
     static member Fun2D x0 y0 width height xmin xmax dx (f : float -> float) =
         let fx = [| for x in [xmin .. (xmax - xmin)*dx .. xmax] do yield x, f x; yield xmax,f xmax |]
         let ymin, ymax = fx |> Array.map (fun (x,y) -> y) |> fun y -> (y |> Array.min), (y |> Array.max)
@@ -173,7 +177,8 @@ type Base =
             //a*ymax+b -> y0
             y0 + (ymax - y)*height/(ymax - ymin))
 
-    // Define RGB color codes.
+(*** hide ***)
+    /// Define RGB color codes.
     static member Black   = [| 0.0f; 0.0f; 0.0f |]
     static member Red     = [| 1.0f; 0.0f; 0.0f |]
     static member Green   = [| 0.0f; 1.0f; 0.0f |]
@@ -183,13 +188,16 @@ type Base =
     static member Cyan    = [| 0.0f; 1.0f; 1.0f |]
     static member White   = [| 1.0f; 1.0f; 1.0f |]
 
-(*** hide ***)
 module Globals =
 
     let mutable width = 800
     let mutable height = 600
     let depth = 32
 
+(**
+For this example it suffice that the vertex and fragment shaders only pass the data through the OpenGL pipeline 
+without further manipulation by its own. 
+*)
     let vertexShaderCode =
         """
         #version 140
@@ -210,6 +218,7 @@ module Globals =
         }
         """
 
+(*** hide ***)
     let vertices =
         [| 0.75f;  0.75f; 0.0f; 1.0f;
            0.75f; -0.75f; 0.0f; 1.0f;

@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Some ( Posts ) | Scripting OpenGL with F#</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Scripting OpenGL 3.1 2D with F# using WPF and SharpGL">
+    <meta name="author" content="fbmnds">
+
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="stylesheet" href="/css/bootstrap-3.3.6.min.css">
+    <link rel="stylesheet" href="/css/style.css" />
+
+    <script src="/lib/jquery-1.11.3.min.js"></script>
+    <script src="/lib/jquery-ui-1.11.3.min.js"></script>
+    <script src="/lib/bootstrap-3.3.6.min.js"></script>
+    <script src="/lib/tips.js"></script>
+</head>
+<body>
+    <div id="page" class="site container-fluid">
+        <header id="site-header" class="site-header row" role="banner">
+            <div id="site-header-global" class="site-header-global">
+            </div>
+            <div id="site-header-blog-wrapper" class="site-header-blog-wrapper ms-blog-header clear-both">
+                <div id="site-header-blog" class="site-header-blog">
+                    <nav class="navbar navbar-inverse">
+                        <div id="blog-logo-area" class="navbar-header">
+                            <div id="blog-logo" data-toggle="collapse" data-target="#blog-menu">
+                                <div id="blog-logo-text">
+                                    <h1>Some ( Posts )</h1>
+                                </div>
+                            </div>
+                        </div>
+                    </nav>
+                </div>
+            </div>
+        </header>
+
+        <div id="site-content" class="site-content row">
+            <div id="primary" class="content-area col-sm-9">
+                <main id="site-main" class="site-main">
+
+                    <div class="span9" id="main">
+                        
+<h1><a name="F-Formatting-Code-formatting" class="anchor" href="#F-Formatting-Code-formatting">F# Formatting: Code formatting</a></h1>
+<p>This page demonstrates how to use <code>FSharp.CodeFormat.dll</code> to tokenize
+F# source code, obtain information about the source code (mainly tooltips
+from the type-checker) and how to turn the code into a nicely formatted HTML.</p>
+<p>First, we need to load the assembly and open necessary namespaces:</p>
+<table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l">1: </span>
+<span class="l">2: </span>
+<span class="l">3: </span>
+</pre></td>
+<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span class="prep">#r</span> <span class="s">&quot;../../bin/FSharp.CodeFormat.dll&quot;</span>
+<span class="k">open</span> <span onmouseout="hideTip(event, 'fs1', 1)" onmouseover="showTip(event, 'fs1', 1)" class="i">FSharp</span><span class="o">.</span><span class="i">CodeFormat</span>
+<span class="k">open</span> <span onmouseout="hideTip(event, 'fs2', 2)" onmouseover="showTip(event, 'fs2', 2)" class="i">System</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs3', 3)" onmouseover="showTip(event, 'fs3', 3)" class="i">Reflection</span>
+</code></pre></td>
+</tr>
+</table>
+<h2><a name="Starting-a-background-agent" class="anchor" href="#Starting-a-background-agent">Starting a background agent</a></h2>
+<p>The <code>FSharp.CodeFormat</code> namespace contains <code>CodeFormat</code> type which is the
+entry point. The static method <code>CreateAgent</code> starts a background worker that
+can be called to format snippets repeatedly:</p>
+<table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l">1: </span>
+<span class="l">2: </span>
+</pre></td>
+<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span class="k">let</span> <span onmouseout="hideTip(event, 'fs4', 4)" onmouseover="showTip(event, 'fs4', 4)" class="i">fsharpCompiler</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs5', 5)" onmouseover="showTip(event, 'fs5', 5)" class="t">Assembly</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs6', 6)" onmouseover="showTip(event, 'fs6', 6)" class="f">Load</span>(<span class="s">&quot;FSharp.Compiler&quot;</span>)
+<span class="k">let</span> <span onmouseout="hideTip(event, 'fs7', 7)" onmouseover="showTip(event, 'fs7', 7)" class="i">formattingAgent</span> <span class="o">=</span> <span class="i">CodeFormat</span><span class="o">.</span><span class="i">CreateAgent</span>(<span onmouseout="hideTip(event, 'fs4', 8)" onmouseover="showTip(event, 'fs4', 8)" class="i">fsharpCompiler</span>)
+</code></pre></td>
+</tr>
+</table>
+<p>If you want to process multiple snippets, it is a good idea to keep the
+formatting agent around if possible. The agent needs to load the F# compiler
+(which needs to load various files itself) and so this takes a long time. As the above
+example shows, you can specify which version of <code>FSharp.Compiler.dll</code> to use.</p>
+<h2><a name="Processing-F-source" class="anchor" href="#Processing-F-source">Processing F# source</a></h2>
+<p>The formatting agent provides a <code>ParseSource</code> method (together with an asynchronous
+version for use from F# and also a version that returns a .NET <code>Task</code> for C#).
+To call the method, we define a simple F# code as a string:</p>
+<table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l">1: </span>
+<span class="l">2: </span>
+<span class="l">3: </span>
+<span class="l">4: </span>
+<span class="l">5: </span>
+</pre></td>
+<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span class="k">let</span> <span onmouseout="hideTip(event, 'fs8', 9)" onmouseover="showTip(event, 'fs8', 9)" class="i">source</span> <span class="o">=</span> <span class="s">&quot;&quot;&quot;</span>
+<span class="s">    let hello () = </span>
+<span class="s">      printfn &quot;Hello world&quot;</span>
+<span class="s">  &quot;&quot;&quot;</span>
+<span class="k">let</span> <span onmouseout="hideTip(event, 'fs9', 10)" onmouseover="showTip(event, 'fs9', 10)" class="i">snippets</span>, <span onmouseout="hideTip(event, 'fs10', 11)" onmouseover="showTip(event, 'fs10', 11)" class="i">errors</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs7', 12)" onmouseover="showTip(event, 'fs7', 12)" class="i">formattingAgent</span><span class="o">.</span><span class="i">ParseSource</span>(<span class="s">&quot;C:</span><span class="e">\\</span><span class="s">snippet.fsx&quot;</span>, <span onmouseout="hideTip(event, 'fs8', 13)" onmouseover="showTip(event, 'fs8', 13)" class="i">source</span>)
+</code></pre></td>
+</tr>
+</table>
+<p>When calling the method, you need to specify a file name and the actual content
+of the script file. The file does not have to physically exist. It is used by the
+F# compiler to resolve relative references (e.g. <code>#r</code>) and to automatically name
+the module including all code in the file.</p>
+<p>You can also specify additional parameters, such as <code>*.dll</code> references, by passing
+a third argument with compiler options (e.g. <code>"-r:Foo.dll -r:Bar.dll"</code>).</p>
+<p>This operation might take some time, so it is a good idea to use an asynchronous
+variant of the method. It returns two arrays - the first contains F# snippets
+in the source code and the second contains any errors reported by the compiler.
+A single source file can include multiple snippets using the same formatting tags
+as those used on <a href="http://www.fssnip.net">fssnip.net</a> as documented in the
+<a href="http://www.fssnip.net/pages/About">about page</a>.</p>
+<h2><a name="Working-with-returned-tokens" class="anchor" href="#Working-with-returned-tokens">Working with returned tokens</a></h2>
+<p>Each returned snippet is essentially just a collection of lines and each line
+consists of a sequence of tokens. The following snippet prints basic information
+about the tokens of our sample snippet:</p>
+<table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l"> 1: </span>
+<span class="l"> 2: </span>
+<span class="l"> 3: </span>
+<span class="l"> 4: </span>
+<span class="l"> 5: </span>
+<span class="l"> 6: </span>
+<span class="l"> 7: </span>
+<span class="l"> 8: </span>
+<span class="l"> 9: </span>
+<span class="l">10: </span>
+<span class="l">11: </span>
+<span class="l">12: </span>
+<span class="l">13: </span>
+<span class="l">14: </span>
+<span class="l">15: </span>
+</pre></td>
+<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span class="c">// Get the first snippet and obtain list of lines</span>
+<span class="k">let</span> (<span class="i">Snippet</span>(<span class="i">title</span>, <span class="i">lines</span>)) <span class="o">=</span> <span onmouseout="hideTip(event, 'fs9', 14)" onmouseover="showTip(event, 'fs9', 14)" class="i">snippets</span> <span class="o">|&gt;</span> <span onmouseout="hideTip(event, 'fs11', 15)" onmouseover="showTip(event, 'fs11', 15)" class="i">Seq</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs12', 16)" onmouseover="showTip(event, 'fs12', 16)" class="i">head</span>
+
+<span class="c">// Iterate over all lines and all tokens on each line</span>
+<span class="k">for</span> (<span class="i">Line</span>(<span class="i">tokens</span>)) <span class="k">in</span> <span class="i">lines</span> <span class="k">do</span>
+  <span class="k">for</span> <span class="i">token</span> <span class="k">in</span> <span class="i">tokens</span> <span class="k">do</span>
+    <span class="k">match</span> <span class="i">token</span> <span class="k">with</span>
+    | <span class="i">TokenSpan</span><span class="o">.</span><span class="i">Token</span>(<span class="i">kind</span>, <span class="i">code</span>, <span class="i">tip</span>) <span class="k">-&gt;</span> 
+        <span onmouseout="hideTip(event, 'fs13', 17)" onmouseover="showTip(event, 'fs13', 17)" class="i">printf</span> <span class="s">&quot;%s&quot;</span> <span class="i">code</span>
+        <span class="i">tip</span> <span class="o">|&gt;</span> <span onmouseout="hideTip(event, 'fs14', 18)" onmouseover="showTip(event, 'fs14', 18)" class="i">Option</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs15', 19)" onmouseover="showTip(event, 'fs15', 19)" class="i">iter</span> (<span class="k">fun</span> <span class="i">spans</span> <span class="k">-&gt;</span>
+          <span onmouseout="hideTip(event, 'fs16', 20)" onmouseover="showTip(event, 'fs16', 20)" class="i">printfn</span> <span class="s">&quot;%A&quot;</span> <span class="i">spans</span>)          
+    | <span class="i">TokenSpan</span><span class="o">.</span><span class="i">Omitted</span> _ 
+    | <span class="i">TokenSpan</span><span class="o">.</span><span class="i">Output</span> _ 
+    | <span class="i">TokenSpan</span><span class="o">.</span><span class="i">Error</span> _ <span class="k">-&gt;</span> ()
+  <span onmouseout="hideTip(event, 'fs16', 21)" onmouseover="showTip(event, 'fs16', 21)" class="i">printfn</span> <span class="s">&quot;&quot;</span>
+</code></pre></td>
+</tr>
+</table>
+<p>The <code>TokenSpan.Token</code> is the most important kind of token. It consists of a kind
+(identifier, keyword, etc.), the original F# code and tool tip information.
+The tool tip is further formatted using a simple document format, but we simply
+print the value using the F# pretty printing, so the result looks as follows:</p>
+<table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l">1: </span>
+<span class="l">2: </span>
+</pre></td>
+<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span class="k">let</span> <span class="i">hello</span>[<span onmouseout="hideTip(event, 'fs17', 22)" onmouseover="showTip(event, 'fs17', 22)" class="i">Literal</span> <span class="s">&quot;val hello : unit -&gt; unit&quot;</span>; <span class="o">..</span><span class="o">.</span>] () <span class="o">=</span> 
+  <span onmouseout="hideTip(event, 'fs16', 23)" onmouseover="showTip(event, 'fs16', 23)" class="i">printfn</span>[<span onmouseout="hideTip(event, 'fs17', 24)" onmouseover="showTip(event, 'fs17', 24)" class="i">Literal</span> <span class="s">&quot;val printfn : TextWriterFormat&lt;&#39;T&gt; -&gt; &#39;T&quot;</span>; <span class="o">..</span><span class="o">.</span>] <span class="s">&quot;Hello world&quot;</span>
+</code></pre></td>
+</tr>
+</table>
+<p>The <code>Omitted</code> token is generated if you use the special <code>(*[omit:...]*)</code> command.
+The <code>Output</code> token is generated if you use the <code>// [fsi:...]</code> command to format
+output returned by F# interactive. The <code>Error</code> command wraps code that should be
+underlined with a red squiggle if the code contains an error.</p>
+<h2><a name="Generating-HTML-output" class="anchor" href="#Generating-HTML-output">Generating HTML output</a></h2>
+<p>Finally, the <code>CodeFormat</code> type also includes a method <code>FormatHtml</code> that can be used
+to generate nice HTML output from an F# snippet. This is used, for example, on
+<a href="http://www.fssnip.net">F# Snippets</a>. The following example shows how to call it:</p>
+<table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l">1: </span>
+<span class="l">2: </span>
+<span class="l">3: </span>
+<span class="l">4: </span>
+<span class="l">5: </span>
+<span class="l">6: </span>
+<span class="l">7: </span>
+<span class="l">8: </span>
+<span class="l">9: </span>
+</pre></td>
+<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span class="k">let</span> <span onmouseout="hideTip(event, 'fs18', 25)" onmouseover="showTip(event, 'fs18', 25)" class="i">prefix</span> <span class="o">=</span> <span class="s">&quot;fst&quot;</span> 
+<span class="k">let</span> <span onmouseout="hideTip(event, 'fs19', 26)" onmouseover="showTip(event, 'fs19', 26)" class="i">html</span> <span class="o">=</span> <span class="i">CodeFormat</span><span class="o">.</span><span class="i">FormatHtml</span>(<span onmouseout="hideTip(event, 'fs9', 27)" onmouseover="showTip(event, 'fs9', 27)" class="i">snippets</span>, <span onmouseout="hideTip(event, 'fs18', 28)" onmouseover="showTip(event, 'fs18', 28)" class="i">prefix</span>)
+
+<span class="c">// Print all snippets, in case there is more of them</span>
+<span class="k">for</span> <span onmouseout="hideTip(event, 'fs20', 29)" onmouseover="showTip(event, 'fs20', 29)" class="i">snip</span> <span class="k">in</span> <span onmouseout="hideTip(event, 'fs19', 30)" onmouseover="showTip(event, 'fs19', 30)" class="i">html</span><span class="o">.</span><span class="i">Snippets</span> <span class="k">do</span>
+  <span onmouseout="hideTip(event, 'fs16', 31)" onmouseover="showTip(event, 'fs16', 31)" class="f">printfn</span> <span class="s">&quot;</span><span class="pf">%s</span><span class="s">&quot;</span> <span onmouseout="hideTip(event, 'fs20', 32)" onmouseover="showTip(event, 'fs20', 32)" class="i">snip</span><span class="o">.</span><span class="i">Content</span>
+
+<span class="c">// Print HTML code that is generated for ToolTips</span>
+<span onmouseout="hideTip(event, 'fs16', 33)" onmouseover="showTip(event, 'fs16', 33)" class="f">printfn</span> <span class="s">&quot;</span><span class="pf">%s</span><span class="s">&quot;</span> <span onmouseout="hideTip(event, 'fs19', 34)" onmouseover="showTip(event, 'fs19', 34)" class="i">html</span><span class="o">.</span><span class="i">ToolTip</span>
+</code></pre></td>
+</tr>
+</table>
+<p>If the input contains multiple snippets separated using the <code>//[snippet:...]</code> comment, e.g.:</p>
+<table class="pre"><tr><td class="lines"><pre class="fssnip">
+<span class="l">1: </span>
+<span class="l">2: </span>
+<span class="l">3: </span>
+<span class="l">4: </span>
+<span class="l">5: </span>
+<span class="l">6: </span>
+<span class="l">7: </span>
+</pre>
+</td>
+<td class="snippet"><pre class="fssnip"><span class="c">// [snippet: First sample]</span>
+<span class="i">printf</span> <span class="s">"The answer is: %A"</span> <span class="n">42</span>
+<span class="c">// [/snippet]</span>
+<span class="c">// [snippet: Second sample]</span>
+<span class="i">printf</span> <span class="s">"Hello world!"</span>
+<span class="c">// [/snippet]</span>
+</pre>
+</td>
+</tr>
+</table>
+<p>then the formatter returns multiple HTML blocks. However, the generated tool tips
+are shared by all snippets (to save space) and so they are returned separately.</p>
+
+<div class="tip" id="fs1">namespace Microsoft.FSharp</div>
+<div class="tip" id="fs2">namespace System</div>
+<div class="tip" id="fs3">namespace System.Reflection</div>
+<div class="tip" id="fs4">val fsharpCompiler : Assembly<br /><br />Full name: Codeformat.fsharpCompiler</div>
+<div class="tip" id="fs5">type Assembly =<br />&#160;&#160;member CodeBase : string<br />&#160;&#160;member CreateInstance : typeName:string -&gt; obj + 2 overloads<br />&#160;&#160;member EntryPoint : MethodInfo<br />&#160;&#160;member Equals : o:obj -&gt; bool<br />&#160;&#160;member EscapedCodeBase : string<br />&#160;&#160;member Evidence : Evidence<br />&#160;&#160;member FullName : string<br />&#160;&#160;member GetCustomAttributes : inherit:bool -&gt; obj[] + 1 overload<br />&#160;&#160;member GetCustomAttributesData : unit -&gt; IList&lt;CustomAttributeData&gt;<br />&#160;&#160;member GetExportedTypes : unit -&gt; Type[]<br />&#160;&#160;...<br /><br />Full name: System.Reflection.Assembly</div>
+<div class="tip" id="fs6">Assembly.Load(rawAssembly: byte []) : Assembly<br />Assembly.Load(assemblyRef: AssemblyName) : Assembly<br />Assembly.Load(assemblyString: string) : Assembly<br />Assembly.Load(rawAssembly: byte [], rawSymbolStore: byte []) : Assembly<br />Assembly.Load(rawAssembly: byte [], rawSymbolStore: byte [], securityContextSource: System.Security.SecurityContextSource) : Assembly</div>
+<div class="tip" id="fs7">val formattingAgent : obj<br /><br />Full name: Codeformat.formattingAgent</div>
+<div class="tip" id="fs8">val source : string<br /><br />Full name: Codeformat.source</div>
+<div class="tip" id="fs9">val snippets : obj<br /><br />Full name: Codeformat.snippets</div>
+<div class="tip" id="fs10">val errors : obj<br /><br />Full name: Codeformat.errors</div>
+<div class="tip" id="fs11">module Seq<br /><br />from Microsoft.FSharp.Collections</div>
+<div class="tip" id="fs12">val head : source:seq&lt;&#39;T&gt; -&gt; &#39;T<br /><br />Full name: Microsoft.FSharp.Collections.Seq.head</div>
+<div class="tip" id="fs13">val printf : format:Printf.TextWriterFormat&lt;&#39;T&gt; -&gt; &#39;T<br /><br />Full name: Microsoft.FSharp.Core.ExtraTopLevelOperators.printf</div>
+<div class="tip" id="fs14">module Option<br /><br />from Microsoft.FSharp.Core</div>
+<div class="tip" id="fs15">val iter : action:(&#39;T -&gt; unit) -&gt; option:&#39;T option -&gt; unit<br /><br />Full name: Microsoft.FSharp.Core.Option.iter</div>
+<div class="tip" id="fs16">val printfn : format:Printf.TextWriterFormat&lt;&#39;T&gt; -&gt; &#39;T<br /><br />Full name: Microsoft.FSharp.Core.ExtraTopLevelOperators.printfn</div>
+<div class="tip" id="fs17">Multiple items<br />type LiteralAttribute =<br />&#160;&#160;inherit Attribute<br />&#160;&#160;new : unit -&gt; LiteralAttribute<br /><br />Full name: Microsoft.FSharp.Core.LiteralAttribute<br /><br />--------------------<br />new : unit -&gt; LiteralAttribute</div>
+<div class="tip" id="fs18">val prefix : string<br /><br />Full name: Codeformat.prefix</div>
+<div class="tip" id="fs19">val html : obj<br /><br />Full name: Codeformat.html</div>
+<div class="tip" id="fs20">val snip : obj</div>
+
+                    </div>
+
+                </main>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
