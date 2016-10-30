@@ -1,0 +1,833 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Bootstrap Example</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+</head>
+
+<body>
+    <div id="secret" class="container">
+        <h2>Unlock</h2>
+        <form id="secret-form">
+            <div class="form-group">
+                <label for="pwd">Password:</label>
+                <input type="password" class="form-control" name="secret">
+            </div>
+            <div id="submit">
+                <button id="btn-submit" type="submit" class="btn btn-default">Submit</button>
+            </div>
+        </form>
+    </div>
+
+    <div id="table" class="container"></div>
+
+    <div id="btn-hide-2" class="container"></div>
+
+    <script>
+        // CryptoJS v3.1.2
+        // code.google.com/p/crypto-js
+        // (c) 2009-2013 by Jeff Mott. All rights reserved.
+        // code.google.com/p/crypto-js/wiki/License 
+
+        var CryptoJS = CryptoJS || function(u, p) {
+            var d = {},
+                l = d.lib = {},
+                s = function() {},
+                t = l.Base = {
+                    extend: function(a) {
+                        s.prototype = this;
+                        var c = new s;
+                        a && c.mixIn(a);
+                        c.hasOwnProperty("init") || (c.init = function() {
+                            c.$super.init.apply(this, arguments)
+                        });
+                        c.init.prototype = c;
+                        c.$super = this;
+                        return c
+                    },
+                    create: function() {
+                        var a = this.extend();
+                        a.init.apply(a, arguments);
+                        return a
+                    },
+                    init: function() {},
+                    mixIn: function(a) {
+                        for (var c in a) a.hasOwnProperty(c) && (this[c] = a[c]);
+                        a.hasOwnProperty("toString") && (this.toString = a.toString)
+                    },
+                    clone: function() {
+                        return this.init.prototype.extend(this)
+                    }
+                },
+                r = l.WordArray = t.extend({
+                    init: function(a, c) {
+                        a = this.words = a || [];
+                        this.sigBytes = c != p ? c : 4 * a.length
+                    },
+                    toString: function(a) {
+                        return (a || v).stringify(this)
+                    },
+                    concat: function(a) {
+                        var c = this.words,
+                            e = a.words,
+                            j = this.sigBytes;
+                        a = a.sigBytes;
+                        this.clamp();
+                        if (j % 4)
+                            for (var k = 0; k < a; k++) c[j + k >>> 2] |= (e[k >>> 2] >>> 24 - 8 * (k % 4) & 255) << 24 - 8 * ((j + k) % 4);
+                        else if (65535 < e.length)
+                            for (k = 0; k < a; k += 4) c[j + k >>> 2] = e[k >>> 2];
+                        else c.push.apply(c, e);
+                        this.sigBytes += a;
+                        return this
+                    },
+                    clamp: function() {
+                        var a = this.words,
+                            c = this.sigBytes;
+                        a[c >>> 2] &= 4294967295 <<
+                            32 - 8 * (c % 4);
+                        a.length = u.ceil(c / 4)
+                    },
+                    clone: function() {
+                        var a = t.clone.call(this);
+                        a.words = this.words.slice(0);
+                        return a
+                    },
+                    random: function(a) {
+                        for (var c = [], e = 0; e < a; e += 4) c.push(4294967296 * u.random() | 0);
+                        return new r.init(c, a)
+                    }
+                }),
+                w = d.enc = {},
+                v = w.Hex = {
+                    stringify: function(a) {
+                        var c = a.words;
+                        a = a.sigBytes;
+                        for (var e = [], j = 0; j < a; j++) {
+                            var k = c[j >>> 2] >>> 24 - 8 * (j % 4) & 255;
+                            e.push((k >>> 4).toString(16));
+                            e.push((k & 15).toString(16))
+                        }
+                        return e.join("")
+                    },
+                    parse: function(a) {
+                        for (var c = a.length, e = [], j = 0; j < c; j += 2) e[j >>> 3] |= parseInt(a.substr(j,
+                            2), 16) << 24 - 4 * (j % 8);
+                        return new r.init(e, c / 2)
+                    }
+                },
+                b = w.Latin1 = {
+                    stringify: function(a) {
+                        var c = a.words;
+                        a = a.sigBytes;
+                        for (var e = [], j = 0; j < a; j++) e.push(String.fromCharCode(c[j >>> 2] >>> 24 - 8 * (j % 4) & 255));
+                        return e.join("")
+                    },
+                    parse: function(a) {
+                        for (var c = a.length, e = [], j = 0; j < c; j++) e[j >>> 2] |= (a.charCodeAt(j) & 255) << 24 - 8 * (j % 4);
+                        return new r.init(e, c)
+                    }
+                },
+                x = w.Utf8 = {
+                    stringify: function(a) {
+                        try {
+                            return decodeURIComponent(escape(b.stringify(a)))
+                        } catch (c) {
+                            throw Error("Malformed UTF-8 data");
+                        }
+                    },
+                    parse: function(a) {
+                        return b.parse(unescape(encodeURIComponent(a)))
+                    }
+                },
+                q = l.BufferedBlockAlgorithm = t.extend({
+                    reset: function() {
+                        this._data = new r.init;
+                        this._nDataBytes = 0
+                    },
+                    _append: function(a) {
+                        "string" == typeof a && (a = x.parse(a));
+                        this._data.concat(a);
+                        this._nDataBytes += a.sigBytes
+                    },
+                    _process: function(a) {
+                        var c = this._data,
+                            e = c.words,
+                            j = c.sigBytes,
+                            k = this.blockSize,
+                            b = j / (4 * k),
+                            b = a ? u.ceil(b) : u.max((b | 0) - this._minBufferSize, 0);
+                        a = b * k;
+                        j = u.min(4 * a, j);
+                        if (a) {
+                            for (var q = 0; q < a; q += k) this._doProcessBlock(e, q);
+                            q = e.splice(0, a);
+                            c.sigBytes -= j
+                        }
+                        return new r.init(q, j)
+                    },
+                    clone: function() {
+                        var a = t.clone.call(this);
+                        a._data = this._data.clone();
+                        return a
+                    },
+                    _minBufferSize: 0
+                });
+            l.Hasher = q.extend({
+                cfg: t.extend(),
+                init: function(a) {
+                    this.cfg = this.cfg.extend(a);
+                    this.reset()
+                },
+                reset: function() {
+                    q.reset.call(this);
+                    this._doReset()
+                },
+                update: function(a) {
+                    this._append(a);
+                    this._process();
+                    return this
+                },
+                finalize: function(a) {
+                    a && this._append(a);
+                    return this._doFinalize()
+                },
+                blockSize: 16,
+                _createHelper: function(a) {
+                    return function(b, e) {
+                        return (new a.init(e)).finalize(b)
+                    }
+                },
+                _createHmacHelper: function(a) {
+                    return function(b, e) {
+                        return (new n.HMAC.init(a,
+                            e)).finalize(b)
+                    }
+                }
+            });
+            var n = d.algo = {};
+            return d
+        }(Math);
+        (function() {
+            var u = CryptoJS,
+                p = u.lib.WordArray;
+            u.enc.Base64 = {
+                stringify: function(d) {
+                    var l = d.words,
+                        p = d.sigBytes,
+                        t = this._map;
+                    d.clamp();
+                    d = [];
+                    for (var r = 0; r < p; r += 3)
+                        for (var w = (l[r >>> 2] >>> 24 - 8 * (r % 4) & 255) << 16 | (l[r + 1 >>> 2] >>> 24 - 8 * ((r + 1) % 4) & 255) << 8 | l[r + 2 >>> 2] >>> 24 - 8 * ((r + 2) % 4) & 255, v = 0; 4 > v && r + 0.75 * v < p; v++) d.push(t.charAt(w >>> 6 * (3 - v) & 63));
+                    if (l = t.charAt(64))
+                        for (; d.length % 4;) d.push(l);
+                    return d.join("")
+                },
+                parse: function(d) {
+                    var l = d.length,
+                        s = this._map,
+                        t = s.charAt(64);
+                    t && (t = d.indexOf(t), -1 != t && (l = t));
+                    for (var t = [], r = 0, w = 0; w <
+                        l; w++)
+                        if (w % 4) {
+                            var v = s.indexOf(d.charAt(w - 1)) << 2 * (w % 4),
+                                b = s.indexOf(d.charAt(w)) >>> 6 - 2 * (w % 4);
+                            t[r >>> 2] |= (v | b) << 24 - 8 * (r % 4);
+                            r++
+                        }
+                    return p.create(t, r)
+                },
+                _map: "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/="
+            }
+        })();
+        (function(u) {
+            function p(b, n, a, c, e, j, k) {
+                b = b + (n & a | ~n & c) + e + k;
+                return (b << j | b >>> 32 - j) + n
+            }
+
+            function d(b, n, a, c, e, j, k) {
+                b = b + (n & c | a & ~c) + e + k;
+                return (b << j | b >>> 32 - j) + n
+            }
+
+            function l(b, n, a, c, e, j, k) {
+                b = b + (n ^ a ^ c) + e + k;
+                return (b << j | b >>> 32 - j) + n
+            }
+
+            function s(b, n, a, c, e, j, k) {
+                b = b + (a ^ (n | ~c)) + e + k;
+                return (b << j | b >>> 32 - j) + n
+            }
+            for (var t = CryptoJS, r = t.lib, w = r.WordArray, v = r.Hasher, r = t.algo, b = [], x = 0; 64 > x; x++) b[x] = 4294967296 * u.abs(u.sin(x + 1)) | 0;
+            r = r.MD5 = v.extend({
+                _doReset: function() {
+                    this._hash = new w.init([1732584193, 4023233417, 2562383102, 271733878])
+                },
+                _doProcessBlock: function(q, n) {
+                    for (var a = 0; 16 > a; a++) {
+                        var c = n + a,
+                            e = q[c];
+                        q[c] = (e << 8 | e >>> 24) & 16711935 | (e << 24 | e >>> 8) & 4278255360
+                    }
+                    var a = this._hash.words,
+                        c = q[n + 0],
+                        e = q[n + 1],
+                        j = q[n + 2],
+                        k = q[n + 3],
+                        z = q[n + 4],
+                        r = q[n + 5],
+                        t = q[n + 6],
+                        w = q[n + 7],
+                        v = q[n + 8],
+                        A = q[n + 9],
+                        B = q[n + 10],
+                        C = q[n + 11],
+                        u = q[n + 12],
+                        D = q[n + 13],
+                        E = q[n + 14],
+                        x = q[n + 15],
+                        f = a[0],
+                        m = a[1],
+                        g = a[2],
+                        h = a[3],
+                        f = p(f, m, g, h, c, 7, b[0]),
+                        h = p(h, f, m, g, e, 12, b[1]),
+                        g = p(g, h, f, m, j, 17, b[2]),
+                        m = p(m, g, h, f, k, 22, b[3]),
+                        f = p(f, m, g, h, z, 7, b[4]),
+                        h = p(h, f, m, g, r, 12, b[5]),
+                        g = p(g, h, f, m, t, 17, b[6]),
+                        m = p(m, g, h, f, w, 22, b[7]),
+                        f = p(f, m, g, h, v, 7, b[8]),
+                        h = p(h, f, m, g, A, 12, b[9]),
+                        g = p(g, h, f, m, B, 17, b[10]),
+                        m = p(m, g, h, f, C, 22, b[11]),
+                        f = p(f, m, g, h, u, 7, b[12]),
+                        h = p(h, f, m, g, D, 12, b[13]),
+                        g = p(g, h, f, m, E, 17, b[14]),
+                        m = p(m, g, h, f, x, 22, b[15]),
+                        f = d(f, m, g, h, e, 5, b[16]),
+                        h = d(h, f, m, g, t, 9, b[17]),
+                        g = d(g, h, f, m, C, 14, b[18]),
+                        m = d(m, g, h, f, c, 20, b[19]),
+                        f = d(f, m, g, h, r, 5, b[20]),
+                        h = d(h, f, m, g, B, 9, b[21]),
+                        g = d(g, h, f, m, x, 14, b[22]),
+                        m = d(m, g, h, f, z, 20, b[23]),
+                        f = d(f, m, g, h, A, 5, b[24]),
+                        h = d(h, f, m, g, E, 9, b[25]),
+                        g = d(g, h, f, m, k, 14, b[26]),
+                        m = d(m, g, h, f, v, 20, b[27]),
+                        f = d(f, m, g, h, D, 5, b[28]),
+                        h = d(h, f,
+                            m, g, j, 9, b[29]),
+                        g = d(g, h, f, m, w, 14, b[30]),
+                        m = d(m, g, h, f, u, 20, b[31]),
+                        f = l(f, m, g, h, r, 4, b[32]),
+                        h = l(h, f, m, g, v, 11, b[33]),
+                        g = l(g, h, f, m, C, 16, b[34]),
+                        m = l(m, g, h, f, E, 23, b[35]),
+                        f = l(f, m, g, h, e, 4, b[36]),
+                        h = l(h, f, m, g, z, 11, b[37]),
+                        g = l(g, h, f, m, w, 16, b[38]),
+                        m = l(m, g, h, f, B, 23, b[39]),
+                        f = l(f, m, g, h, D, 4, b[40]),
+                        h = l(h, f, m, g, c, 11, b[41]),
+                        g = l(g, h, f, m, k, 16, b[42]),
+                        m = l(m, g, h, f, t, 23, b[43]),
+                        f = l(f, m, g, h, A, 4, b[44]),
+                        h = l(h, f, m, g, u, 11, b[45]),
+                        g = l(g, h, f, m, x, 16, b[46]),
+                        m = l(m, g, h, f, j, 23, b[47]),
+                        f = s(f, m, g, h, c, 6, b[48]),
+                        h = s(h, f, m, g, w, 10, b[49]),
+                        g = s(g, h, f, m,
+                            E, 15, b[50]),
+                        m = s(m, g, h, f, r, 21, b[51]),
+                        f = s(f, m, g, h, u, 6, b[52]),
+                        h = s(h, f, m, g, k, 10, b[53]),
+                        g = s(g, h, f, m, B, 15, b[54]),
+                        m = s(m, g, h, f, e, 21, b[55]),
+                        f = s(f, m, g, h, v, 6, b[56]),
+                        h = s(h, f, m, g, x, 10, b[57]),
+                        g = s(g, h, f, m, t, 15, b[58]),
+                        m = s(m, g, h, f, D, 21, b[59]),
+                        f = s(f, m, g, h, z, 6, b[60]),
+                        h = s(h, f, m, g, C, 10, b[61]),
+                        g = s(g, h, f, m, j, 15, b[62]),
+                        m = s(m, g, h, f, A, 21, b[63]);
+                    a[0] = a[0] + f | 0;
+                    a[1] = a[1] + m | 0;
+                    a[2] = a[2] + g | 0;
+                    a[3] = a[3] + h | 0
+                },
+                _doFinalize: function() {
+                    var b = this._data,
+                        n = b.words,
+                        a = 8 * this._nDataBytes,
+                        c = 8 * b.sigBytes;
+                    n[c >>> 5] |= 128 << 24 - c % 32;
+                    var e = u.floor(a /
+                        4294967296);
+                    n[(c + 64 >>> 9 << 4) + 15] = (e << 8 | e >>> 24) & 16711935 | (e << 24 | e >>> 8) & 4278255360;
+                    n[(c + 64 >>> 9 << 4) + 14] = (a << 8 | a >>> 24) & 16711935 | (a << 24 | a >>> 8) & 4278255360;
+                    b.sigBytes = 4 * (n.length + 1);
+                    this._process();
+                    b = this._hash;
+                    n = b.words;
+                    for (a = 0; 4 > a; a++) c = n[a], n[a] = (c << 8 | c >>> 24) & 16711935 | (c << 24 | c >>> 8) & 4278255360;
+                    return b
+                },
+                clone: function() {
+                    var b = v.clone.call(this);
+                    b._hash = this._hash.clone();
+                    return b
+                }
+            });
+            t.MD5 = v._createHelper(r);
+            t.HmacMD5 = v._createHmacHelper(r)
+        })(Math);
+        (function() {
+            var u = CryptoJS,
+                p = u.lib,
+                d = p.Base,
+                l = p.WordArray,
+                p = u.algo,
+                s = p.EvpKDF = d.extend({
+                    cfg: d.extend({
+                        keySize: 4,
+                        hasher: p.MD5,
+                        iterations: 1
+                    }),
+                    init: function(d) {
+                        this.cfg = this.cfg.extend(d)
+                    },
+                    compute: function(d, r) {
+                        for (var p = this.cfg, s = p.hasher.create(), b = l.create(), u = b.words, q = p.keySize, p = p.iterations; u.length < q;) {
+                            n && s.update(n);
+                            var n = s.update(d).finalize(r);
+                            s.reset();
+                            for (var a = 1; a < p; a++) n = s.finalize(n), s.reset();
+                            b.concat(n)
+                        }
+                        b.sigBytes = 4 * q;
+                        return b
+                    }
+                });
+            u.EvpKDF = function(d, l, p) {
+                return s.create(p).compute(d,
+                    l)
+            }
+        })();
+        CryptoJS.lib.Cipher || function(u) {
+            var p = CryptoJS,
+                d = p.lib,
+                l = d.Base,
+                s = d.WordArray,
+                t = d.BufferedBlockAlgorithm,
+                r = p.enc.Base64,
+                w = p.algo.EvpKDF,
+                v = d.Cipher = t.extend({
+                    cfg: l.extend(),
+                    createEncryptor: function(e, a) {
+                        return this.create(this._ENC_XFORM_MODE, e, a)
+                    },
+                    createDecryptor: function(e, a) {
+                        return this.create(this._DEC_XFORM_MODE, e, a)
+                    },
+                    init: function(e, a, b) {
+                        this.cfg = this.cfg.extend(b);
+                        this._xformMode = e;
+                        this._key = a;
+                        this.reset()
+                    },
+                    reset: function() {
+                        t.reset.call(this);
+                        this._doReset()
+                    },
+                    process: function(e) {
+                        this._append(e);
+                        return this._process()
+                    },
+                    finalize: function(e) {
+                        e && this._append(e);
+                        return this._doFinalize()
+                    },
+                    keySize: 4,
+                    ivSize: 4,
+                    _ENC_XFORM_MODE: 1,
+                    _DEC_XFORM_MODE: 2,
+                    _createHelper: function(e) {
+                        return {
+                            encrypt: function(b, k, d) {
+                                return ("string" == typeof k ? c : a).encrypt(e, b, k, d)
+                            },
+                            decrypt: function(b, k, d) {
+                                return ("string" == typeof k ? c : a).decrypt(e, b, k, d)
+                            }
+                        }
+                    }
+                });
+            d.StreamCipher = v.extend({
+                _doFinalize: function() {
+                    return this._process(!0)
+                },
+                blockSize: 1
+            });
+            var b = p.mode = {},
+                x = function(e, a, b) {
+                    var c = this._iv;
+                    c ? this._iv = u : c = this._prevBlock;
+                    for (var d = 0; d < b; d++) e[a + d] ^=
+                        c[d]
+                },
+                q = (d.BlockCipherMode = l.extend({
+                    createEncryptor: function(e, a) {
+                        return this.Encryptor.create(e, a)
+                    },
+                    createDecryptor: function(e, a) {
+                        return this.Decryptor.create(e, a)
+                    },
+                    init: function(e, a) {
+                        this._cipher = e;
+                        this._iv = a
+                    }
+                })).extend();
+            q.Encryptor = q.extend({
+                processBlock: function(e, a) {
+                    var b = this._cipher,
+                        c = b.blockSize;
+                    x.call(this, e, a, c);
+                    b.encryptBlock(e, a);
+                    this._prevBlock = e.slice(a, a + c)
+                }
+            });
+            q.Decryptor = q.extend({
+                processBlock: function(e, a) {
+                    var b = this._cipher,
+                        c = b.blockSize,
+                        d = e.slice(a, a + c);
+                    b.decryptBlock(e, a);
+                    x.call(this,
+                        e, a, c);
+                    this._prevBlock = d
+                }
+            });
+            b = b.CBC = q;
+            q = (p.pad = {}).Pkcs7 = {
+                pad: function(a, b) {
+                    for (var c = 4 * b, c = c - a.sigBytes % c, d = c << 24 | c << 16 | c << 8 | c, l = [], n = 0; n < c; n += 4) l.push(d);
+                    c = s.create(l, c);
+                    a.concat(c)
+                },
+                unpad: function(a) {
+                    a.sigBytes -= a.words[a.sigBytes - 1 >>> 2] & 255
+                }
+            };
+            d.BlockCipher = v.extend({
+                cfg: v.cfg.extend({
+                    mode: b,
+                    padding: q
+                }),
+                reset: function() {
+                    v.reset.call(this);
+                    var a = this.cfg,
+                        b = a.iv,
+                        a = a.mode;
+                    if (this._xformMode == this._ENC_XFORM_MODE) var c = a.createEncryptor;
+                    else c = a.createDecryptor, this._minBufferSize = 1;
+                    this._mode = c.call(a,
+                        this, b && b.words)
+                },
+                _doProcessBlock: function(a, b) {
+                    this._mode.processBlock(a, b)
+                },
+                _doFinalize: function() {
+                    var a = this.cfg.padding;
+                    if (this._xformMode == this._ENC_XFORM_MODE) {
+                        a.pad(this._data, this.blockSize);
+                        var b = this._process(!0)
+                    } else b = this._process(!0), a.unpad(b);
+                    return b
+                },
+                blockSize: 4
+            });
+            var n = d.CipherParams = l.extend({
+                    init: function(a) {
+                        this.mixIn(a)
+                    },
+                    toString: function(a) {
+                        return (a || this.formatter).stringify(this)
+                    }
+                }),
+                b = (p.format = {}).OpenSSL = {
+                    stringify: function(a) {
+                        var b = a.ciphertext;
+                        a = a.salt;
+                        return (a ? s.create([1398893684,
+                            1701076831
+                        ]).concat(a).concat(b) : b).toString(r)
+                    },
+                    parse: function(a) {
+                        a = r.parse(a);
+                        var b = a.words;
+                        if (1398893684 == b[0] && 1701076831 == b[1]) {
+                            var c = s.create(b.slice(2, 4));
+                            b.splice(0, 4);
+                            a.sigBytes -= 16
+                        }
+                        return n.create({
+                            ciphertext: a,
+                            salt: c
+                        })
+                    }
+                },
+                a = d.SerializableCipher = l.extend({
+                    cfg: l.extend({
+                        format: b
+                    }),
+                    encrypt: function(a, b, c, d) {
+                        d = this.cfg.extend(d);
+                        var l = a.createEncryptor(c, d);
+                        b = l.finalize(b);
+                        l = l.cfg;
+                        return n.create({
+                            ciphertext: b,
+                            key: c,
+                            iv: l.iv,
+                            algorithm: a,
+                            mode: l.mode,
+                            padding: l.padding,
+                            blockSize: a.blockSize,
+                            formatter: d.format
+                        })
+                    },
+                    decrypt: function(a, b, c, d) {
+                        d = this.cfg.extend(d);
+                        b = this._parse(b, d.format);
+                        return a.createDecryptor(c, d).finalize(b.ciphertext)
+                    },
+                    _parse: function(a, b) {
+                        return "string" == typeof a ? b.parse(a, this) : a
+                    }
+                }),
+                p = (p.kdf = {}).OpenSSL = {
+                    execute: function(a, b, c, d) {
+                        d || (d = s.random(8));
+                        a = w.create({
+                            keySize: b + c
+                        }).compute(a, d);
+                        c = s.create(a.words.slice(b), 4 * c);
+                        a.sigBytes = 4 * b;
+                        return n.create({
+                            key: a,
+                            iv: c,
+                            salt: d
+                        })
+                    }
+                },
+                c = d.PasswordBasedCipher = a.extend({
+                    cfg: a.cfg.extend({
+                        kdf: p
+                    }),
+                    encrypt: function(b, c, d, l) {
+                        l = this.cfg.extend(l);
+                        d = l.kdf.execute(d,
+                            b.keySize, b.ivSize);
+                        l.iv = d.iv;
+                        b = a.encrypt.call(this, b, c, d.key, l);
+                        b.mixIn(d);
+                        return b
+                    },
+                    decrypt: function(b, c, d, l) {
+                        l = this.cfg.extend(l);
+                        c = this._parse(c, l.format);
+                        d = l.kdf.execute(d, b.keySize, b.ivSize, c.salt);
+                        l.iv = d.iv;
+                        return a.decrypt.call(this, b, c, d.key, l)
+                    }
+                })
+        }();
+        (function() {
+            for (var u = CryptoJS, p = u.lib.BlockCipher, d = u.algo, l = [], s = [], t = [], r = [], w = [], v = [], b = [], x = [], q = [], n = [], a = [], c = 0; 256 > c; c++) a[c] = 128 > c ? c << 1 : c << 1 ^ 283;
+            for (var e = 0, j = 0, c = 0; 256 > c; c++) {
+                var k = j ^ j << 1 ^ j << 2 ^ j << 3 ^ j << 4,
+                    k = k >>> 8 ^ k & 255 ^ 99;
+                l[e] = k;
+                s[k] = e;
+                var z = a[e],
+                    F = a[z],
+                    G = a[F],
+                    y = 257 * a[k] ^ 16843008 * k;
+                t[e] = y << 24 | y >>> 8;
+                r[e] = y << 16 | y >>> 16;
+                w[e] = y << 8 | y >>> 24;
+                v[e] = y;
+                y = 16843009 * G ^ 65537 * F ^ 257 * z ^ 16843008 * e;
+                b[k] = y << 24 | y >>> 8;
+                x[k] = y << 16 | y >>> 16;
+                q[k] = y << 8 | y >>> 24;
+                n[k] = y;
+                e ? (e = z ^ a[a[a[G ^ z]]], j ^= a[a[j]]) : e = j = 1
+            }
+            var H = [0, 1, 2, 4, 8,
+                    16, 32, 64, 128, 27, 54
+                ],
+                d = d.AES = p.extend({
+                    _doReset: function() {
+                        for (var a = this._key, c = a.words, d = a.sigBytes / 4, a = 4 * ((this._nRounds = d + 6) + 1), e = this._keySchedule = [], j = 0; j < a; j++)
+                            if (j < d) e[j] = c[j];
+                            else {
+                                var k = e[j - 1];
+                                j % d ? 6 < d && 4 == j % d && (k = l[k >>> 24] << 24 | l[k >>> 16 & 255] << 16 | l[k >>> 8 & 255] << 8 | l[k & 255]) : (k = k << 8 | k >>> 24, k = l[k >>> 24] << 24 | l[k >>> 16 & 255] << 16 | l[k >>> 8 & 255] << 8 | l[k & 255], k ^= H[j / d | 0] << 24);
+                                e[j] = e[j - d] ^ k
+                            }
+                        c = this._invKeySchedule = [];
+                        for (d = 0; d < a; d++) j = a - d, k = d % 4 ? e[j] : e[j - 4], c[d] = 4 > d || 4 >= j ? k : b[l[k >>> 24]] ^ x[l[k >>> 16 & 255]] ^ q[l[k >>>
+                            8 & 255]] ^ n[l[k & 255]]
+                    },
+                    encryptBlock: function(a, b) {
+                        this._doCryptBlock(a, b, this._keySchedule, t, r, w, v, l)
+                    },
+                    decryptBlock: function(a, c) {
+                        var d = a[c + 1];
+                        a[c + 1] = a[c + 3];
+                        a[c + 3] = d;
+                        this._doCryptBlock(a, c, this._invKeySchedule, b, x, q, n, s);
+                        d = a[c + 1];
+                        a[c + 1] = a[c + 3];
+                        a[c + 3] = d
+                    },
+                    _doCryptBlock: function(a, b, c, d, e, j, l, f) {
+                        for (var m = this._nRounds, g = a[b] ^ c[0], h = a[b + 1] ^ c[1], k = a[b + 2] ^ c[2], n = a[b + 3] ^ c[3], p = 4, r = 1; r < m; r++) var q = d[g >>> 24] ^ e[h >>> 16 & 255] ^ j[k >>> 8 & 255] ^ l[n & 255] ^ c[p++],
+                            s = d[h >>> 24] ^ e[k >>> 16 & 255] ^ j[n >>> 8 & 255] ^ l[g & 255] ^ c[p++],
+                            t =
+                            d[k >>> 24] ^ e[n >>> 16 & 255] ^ j[g >>> 8 & 255] ^ l[h & 255] ^ c[p++],
+                            n = d[n >>> 24] ^ e[g >>> 16 & 255] ^ j[h >>> 8 & 255] ^ l[k & 255] ^ c[p++],
+                            g = q,
+                            h = s,
+                            k = t;
+                        q = (f[g >>> 24] << 24 | f[h >>> 16 & 255] << 16 | f[k >>> 8 & 255] << 8 | f[n & 255]) ^ c[p++];
+                        s = (f[h >>> 24] << 24 | f[k >>> 16 & 255] << 16 | f[n >>> 8 & 255] << 8 | f[g & 255]) ^ c[p++];
+                        t = (f[k >>> 24] << 24 | f[n >>> 16 & 255] << 16 | f[g >>> 8 & 255] << 8 | f[h & 255]) ^ c[p++];
+                        n = (f[n >>> 24] << 24 | f[g >>> 16 & 255] << 16 | f[h >>> 8 & 255] << 8 | f[k & 255]) ^ c[p++];
+                        a[b] = q;
+                        a[b + 1] = s;
+                        a[b + 2] = t;
+                        a[b + 3] = n
+                    },
+                    keySize: 8
+                });
+            u.AES = p._createHelper(d)
+        })();
+
+        // LZW-compress a string
+        function lzw_encode(s) {
+            var dict = {};
+            var data = (s + "").split("");
+            var out = [];
+            var currChar;
+            var phrase = data[0];
+            var code = 256;
+            for (var i = 1; i < data.length; i++) {
+                currChar = data[i];
+                if (dict[phrase + currChar] != null) {
+                    phrase += currChar;
+                } else {
+                    out.push(phrase.length > 1 ? dict[phrase] : phrase.charCodeAt(0));
+                    dict[phrase + currChar] = code;
+                    code++;
+                    phrase = currChar;
+                }
+            }
+            out.push(phrase.length > 1 ? dict[phrase] : phrase.charCodeAt(0));
+            for (var i = 0; i < out.length; i++) {
+                out[i] = String.fromCharCode(out[i]);
+            }
+            return out.join("");
+        }
+
+        // Decompress an LZW-encoded string
+        function lzw_decode(s) {
+            var dict = {};
+            var data = (s + "").split("");
+            var currChar = data[0];
+            var oldPhrase = currChar;
+            var out = [currChar];
+            var code = 256;
+            var phrase;
+            for (var i = 1; i < data.length; i++) {
+                var currCode = data[i].charCodeAt(0);
+                if (currCode < 256) {
+                    phrase = data[i];
+                } else {
+                    phrase = dict[currCode] ? dict[currCode] : (oldPhrase + currChar);
+                }
+                out.push(phrase);
+                currChar = phrase.charAt(0);
+                dict[code] = oldPhrase + currChar;
+                code++;
+                oldPhrase = phrase;
+            }
+            return out.join("");
+        }
+
+        var encrypted =
+            "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";
+        var test = "U2FsdGVkX1+lYkyd58HdE08wIBiLQr5q/d69eUYMaQ0=";
+        var secret = "";
+        var decrypted = "";
+
+        function hide(event) {
+            event.preventDefault();
+            $('#table').empty();
+            $('#submit').empty();
+            $('#submit').append("<button type=\"submit\" class=\"btn btn-default\">Submit</button>");
+            $('#btn-hide-2').empty();
+        };
+
+        $("#secret-form").submit(function(event) {
+            secret = event.currentTarget[0].value.toString();
+            event.currentTarget[0].value = "";
+            event.preventDefault();
+            //evt.stopPropagation();
+
+            if (secret.length > 0 && CryptoJS.AES.decrypt(test, secret).toString(CryptoJS.enc.Utf8) == secret) {
+                decrypted = lzw_decode(CryptoJS.AES.decrypt(encrypted, secret).toString(CryptoJS.enc.Utf8));
+                var lines = decrypted.split("\n"),
+                    table = [],
+                    line = [],
+                    i;
+                for (i = 0; i < lines.length; i++) {
+                    line = lines[i].slice(0, -1).split(";");
+                    line = [line[0], line[3], line[4]];
+                    table.push("<tr><td>" +
+                        line.join("</td><td>") +
+                        "</td></tr>");
+                }
+                decrypted = "<h2>Secret data</h2> \
+                    <table class=\"table table-striped\">" + table.join("") + "</table>";
+                $('#table').append(decrypted);
+
+                $('#submit').empty();
+                $('#submit').append("<button id=\"btn-hide-1\" type=\"submit\" class=\"btn btn-default\">Hide</button>");
+                $("#btn-hide-1").click(hide);
+                $('#btn-hide-2').append("<button type=\"submit\" class=\"btn btn-default\">Hide</button>");
+                $("#btn-hide-2 button").click(hide);
+            };
+            secret = "";
+        });
+    </script>
+
+</body>
+
+</html>
