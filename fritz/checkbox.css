@@ -1,0 +1,67 @@
+.swx {
+    position: relative; }
+
+  .swx > [type="checkbox"]:checked,
+  .swx > [type="checkbox"]:not(:checked) {
+    width: 0;
+    height: 0;
+    display: none;
+    opacity: 0; }
+    .swx > [type="checkbox"]:checked + label,
+    .swx > [type="checkbox"]:not(:checked) + label {
+      cursor: pointer;
+      display: inline-block;
+      width: 150px;
+      margin-right: 7px;
+      margin-top: 7px;
+      margin-bottom: 7px;
+      padding-right: 60px; }
+      .swx > [type="checkbox"]:checked + label:after,
+      .swx > [type="checkbox"]:not(:checked) + label:after {
+        content: "";
+        top: 4px;
+        right: 10px;
+        width: 30px;
+        height: 12px;
+        position: absolute;
+        border-radius: 30px; }
+      .swx > [type="checkbox"]:checked + label + .swx-knob,
+      .swx > [type="checkbox"]:not(:checked) + label + .swx-knob {
+        top: 0;
+        width: 20px;
+        height: 20px;
+        border-radius: 30px;
+        display: inline-block;
+        position: absolute;
+        cursor: pointer;
+        pointer-events: none;
+        box-shadow: 1px 1px 1px #dddddd;
+        transition: right .1s ease-in, background-color .1s ease-in;
+        -webkit-transition: right .1s ease-in, background-color .1s ease-in;
+        -moz-transition: right .1s ease-in, background-color .1s ease-in;
+        -o-transition: right .1s ease-in, background-color .1s ease-in;
+        -ms-transition: right .1s ease-in, background-color .1s ease-in; }
+    .swx > [type="checkbox"]:checked:focus + label:after, .swx > [type="checkbox"]:checked:focus + label + .swx-knob,
+    .swx > [type="checkbox"]:not(:checked):focus + label:after,
+    .swx > [type="checkbox"]:not(:checked):focus + label + .swx-knob {
+      box-shadow: 0 0 6px 0 #6fb5fb; }
+    .swx > [type="checkbox"]:checked[disabled] + label, .swx > [type="checkbox"]:checked[disabled] + label:after, .swx > [type="checkbox"]:checked[disabled] + label + .swx-knob,
+    .swx > [type="checkbox"]:not(:checked)[disabled] + label,
+    .swx > [type="checkbox"]:not(:checked)[disabled] + label:after,
+    .swx > [type="checkbox"]:not(:checked)[disabled] + label + .swx-knob {
+      cursor: not-allowed;
+      opacity: 0.4;}
+
+  .swx > [type="checkbox"]:checked + label:after {
+    background-color: #9effc4; }
+
+  .swx > [type="checkbox"]:not(:checked) + label:after {
+    background-color: #dddddd; }
+
+  .swx > [type="checkbox"]:checked + label + .swx-knob {
+    right: 5px;
+    background-color: #57cb85; }
+
+  .swx > [type="checkbox"]:not(:checked) + label + .swx-knob {
+    right: 25px;
+    background-color: #849fbb; }
