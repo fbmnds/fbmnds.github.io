@@ -1,3 +1,4 @@
 bin/
 build/
-fritz/secrets.js
+.vscode/
+fritz/scratchpad.js

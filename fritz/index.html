@@ -5,8 +5,6 @@
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
     <style>
 
 .icon {
@@ -156,14 +154,17 @@ animation: spinoffPulse 1s infinite linear;
     <link rel="apple-touch-icon-precomposed" href="img/favicon-180x180.png" />
     <meta name="msapplication-TileImage" content="img/favicon-270x270.png" />
 
-    <script type="text/javascript" src="secrets.js"></script>
     <script type="text/javascript">
         var fun_p64 = 0;
         var zen     = 0;
         var store   = 0;
         var eth     = 0;
+        var api_key = "";
+        var ip      = "";
+        var url0    = "";
         function status () {
-            var url = url0 + "/" + api_key + "/status";
+            var url = url0 + "/status";
+            alert (url);
             fetch({"url":url,"mode":"cors"}).then(function (response) {
                 return response.json();
             }).then(function (json) {
@@ -207,44 +208,70 @@ animation: spinoffPulse 1s infinite linear;
                 e.style.display = 'block';
         };
         function swx (x = 'undefined') {
-            var p = new XMLHttpRequest();
-            var url = url0 + "/" + api_key;
-
+            var url = url0;
             function swx_ctl (c = -1) {
                 if (c == 0) { c = 1; url += "/on"; }
                 else        { c = 0; url += "/off"; }
             };
-
             if (x == 'fun-p64')    { url += "/1"; swx_ctl(fun_p64); }
             else if (x == 'zen')   { url += "/3"; swx_ctl(zen); }
             else if (x == 'store') { url += "/2"; swx_ctl(store); }
             else if (x == 'eth')   { url += "/4"; swx_ctl(eth); }
             else { return -1; }
 
-            p.open("GET", url, true);
-            p.send();
-            p.onloadend = function () { status (); };
-            return 0;
+            fetch({"url":url,"mode":"cors"}).then(function (response) {
+                return response.json();
+            }).then(function (json) {
+                console.log(json);
+                fun_p64 = json.fun_p64;
+                zen = json.zen;
+                store = json.store;
+                eth = json.eth;
+                swx_ctl_state();
+            });
         };
         function swx1 () { swx('fun-p64'); };
         function swx2 () { swx('zen'); };
         function swx3 () { swx('store'); };
         function swx4 () { swx('eth'); };
 
+        function refresh () {
+            ip = document.getElementById("ip").value;
+            api_key = document.getElementById("api_key").value;
+            url0    = "https://" + ip + "/" + api_key;
+            status ();
+        };
+
     </script>
 
 
 </head>
 
-<body onload="status();">
+<body>
 
-    <div class="container">
+    <div class="container bottom-one">
         <h2>Controls</h2>
     </div>
 
     <div id="get-status" style="display:block;" class="bottom-one" class="container">
-        <p></p>
-        <div style="width:170px;">
+        <div class="container">
+            <form id="access">
+                <div>
+                    <span>
+                        <label for="server">IP</label>
+                        <input type="text" id="ip" style="margin-left:88px; margin-right:0px;">
+                    </span>
+                </div>
+                <div>
+                    <span>
+                        <label for="api_key">API key</label>
+                        <input type="password" id="api_key" style="margin-left:50px; margin-right:0px;">
+                    </span>
+                </div>
+            </form>
+            <button onclick="refresh();">refresh</button>
+        </div>
+        <div style="margin-left:-230px;margin-top:1.5cm" class="container bottom-one">
             <div class="outerCircle"></div>
             <div class="innerCircle"></div>
             <div class="icon"></div>
