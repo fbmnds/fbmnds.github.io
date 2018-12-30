@@ -7,7 +7,6 @@ var ip      = "";
 var url0    = "";
 function status () {
     var url = url0 + "/status";
-    alert (url);
     fetch(url).then(function (response) {
         return response.json();
     }).then(function (json) {
