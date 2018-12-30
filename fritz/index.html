@@ -164,20 +164,18 @@ animation: spinoffPulse 1s infinite linear;
         var eth     = 0;
         function status () {
             var url = url0 + "/" + api_key + "/status";
-            var req = new XMLHttpRequest(url);
-            req.responseType = 'json';
-            req.open('GET', url, true);
-            req.send();
-            req.onloadend = function () {
-                var json = req.response;
+            fetch({"url":url,"mode":"cors"}).then(function (response) {
+                return response.json();
+            }).then(function (json) {
+                console.log(json);
                 fun_p64 = json.fun_p64;
-                zen     = json.zen;
-                store   = json.store;
-                eth     = json.eth;
+                zen = json.zen;
+                store = json.store;
+                eth = json.eth;
                 swx_visibility("get-status");
                 swx_visibility("controls");
-                swx_ctl_state ();
-            };
+                swx_ctl_state();
+            });
         };
         function swx_ctl_state () {
             if (fun_p64 == 1) {
@@ -210,7 +208,7 @@ animation: spinoffPulse 1s infinite linear;
         };
         function swx (x = 'undefined') {
             var p = new XMLHttpRequest();
-            var url = url0;
+            var url = url0 + "/" + api_key;
 
             function swx_ctl (c = -1) {
                 if (c == 0) { c = 1; url += "/on"; }
@@ -225,7 +223,7 @@ animation: spinoffPulse 1s infinite linear;
 
             p.open("GET", url, true);
             p.send();
-            req.onloadend = function () { status (); };
+            p.onloadend = function () { status (); };
             return 0;
         };
         function swx1 () { swx('fun-p64'); };
@@ -244,7 +242,7 @@ animation: spinoffPulse 1s infinite linear;
         <h2>Controls</h2>
     </div>
 
-    <div id="get-status" style="display:block;" class="bottom-one">
+    <div id="get-status" style="display:block;" class="bottom-one" class="container">
         <p></p>
         <div style="width:170px;">
             <div class="outerCircle"></div>
@@ -253,7 +251,7 @@ animation: spinoffPulse 1s infinite linear;
         </div>
     </div>
 
-    <div id="controls" style="display:none;">
+    <div id="controls" style="display:none;" class="container">
         <div>
             <span class="swx">
                 <input type="checkbox" id="fun-p64" onclick="swx1();">
