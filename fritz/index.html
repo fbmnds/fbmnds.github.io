@@ -273,16 +273,19 @@ animation: spinoffPulse 1s infinite linear;
                     </span>
                 </div>
             </form>
-            <button onclick="refresh();">refresh</button>
         </div>
-        <div style="margin-left:-230px;margin-top:1.5cm" class="container bottom-one">
+        <div style="margin-left:-230px;margin-top:1.5cm;height: 120px;" class="container">
             <div class="outerCircle"></div>
             <div class="innerCircle"></div>
             <div class="icon"></div>
         </div>
     </div>
 
-    <div id="controls" style="display:none;" class="container">
+    <div id="refresh" class="container bottom-one">
+        <button onclick="refresh();">Refresh</button>
+    </div>
+
+    <div id="controls" style="display:none;" class="container bottom-one">
         <div>
             <span class="swx">
                 <input type="checkbox" id="fun-p64" onclick="swx1();">
@@ -315,8 +318,6 @@ animation: spinoffPulse 1s infinite linear;
             </span>
         </div>
     </div>
-
-    <div id="btn-hide-2" class="container"></div>
 
 </body>
 
