@@ -221,13 +221,17 @@ animation: spinoffPulse 1s infinite linear;
 
             fetch(url).then(function (response) {
                 return response.json();
-            }).then(function (json) {
-                console.log(json);
-                fun_p64 = json.fun_p64;
-                zen = json.zen;
-                store = json.store;
-                eth = json.eth;
-                swx_ctl_state();
+            }).then(function (_) {
+                fetch(url).then(function (response) {
+                    return response.json();
+                }).then(function (json) {
+                    console.log(json);
+                    fun_p64 = json.fun_p64;
+                    zen = json.zen;
+                    store = json.store;
+                    eth = json.eth;
+                    swx_ctl_state();
+                });
             });
         };
         function swx1 () { swx('fun-p64'); };
