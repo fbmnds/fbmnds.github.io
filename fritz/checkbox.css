@@ -1,67 +1,46 @@
-.swx {
-    position: relative; }
 
-  .swx > [type="checkbox"]:checked,
-  .swx > [type="checkbox"]:not(:checked) {
-    width: 0;
-    height: 0;
-    display: none;
-    opacity: 0; }
-    .swx > [type="checkbox"]:checked + label,
-    .swx > [type="checkbox"]:not(:checked) + label {
-      cursor: pointer;
-      display: inline-block;
-      width: 150px;
-      margin-right: 7px;
-      margin-top: 7px;
-      margin-bottom: 7px;
-      padding-right: 60px; }
-      .swx > [type="checkbox"]:checked + label:after,
-      .swx > [type="checkbox"]:not(:checked) + label:after {
-        content: "";
-        top: 4px;
-        right: 10px;
-        width: 30px;
-        height: 12px;
-        position: absolute;
-        border-radius: 30px; }
-      .swx > [type="checkbox"]:checked + label + .swx-knob,
-      .swx > [type="checkbox"]:not(:checked) + label + .swx-knob {
-        top: 0;
-        width: 20px;
-        height: 20px;
-        border-radius: 30px;
-        display: inline-block;
-        position: absolute;
-        cursor: pointer;
-        pointer-events: none;
-        box-shadow: 1px 1px 1px #dddddd;
-        transition: right .1s ease-in, background-color .1s ease-in;
-        -webkit-transition: right .1s ease-in, background-color .1s ease-in;
-        -moz-transition: right .1s ease-in, background-color .1s ease-in;
-        -o-transition: right .1s ease-in, background-color .1s ease-in;
-        -ms-transition: right .1s ease-in, background-color .1s ease-in; }
-    .swx > [type="checkbox"]:checked:focus + label:after, .swx > [type="checkbox"]:checked:focus + label + .swx-knob,
-    .swx > [type="checkbox"]:not(:checked):focus + label:after,
-    .swx > [type="checkbox"]:not(:checked):focus + label + .swx-knob {
-      box-shadow: 0 0 6px 0 #6fb5fb; }
-    .swx > [type="checkbox"]:checked[disabled] + label, .swx > [type="checkbox"]:checked[disabled] + label:after, .swx > [type="checkbox"]:checked[disabled] + label + .swx-knob,
-    .swx > [type="checkbox"]:not(:checked)[disabled] + label,
-    .swx > [type="checkbox"]:not(:checked)[disabled] + label:after,
-    .swx > [type="checkbox"]:not(:checked)[disabled] + label + .swx-knob {
-      cursor: not-allowed;
-      opacity: 0.4;}
+/* https://paulund.co.uk/how-to-style-a-checkbox-with-css */
 
-  .swx > [type="checkbox"]:checked + label:after {
-    background-color: #9effc4; }
+input[type=checkbox] {
+  visibility: hidden;
+}
 
-  .swx > [type="checkbox"]:not(:checked) + label:after {
-    background-color: #dddddd; }
+.checkboxTwo {
+  width: 120px;
+  height: 40px;
+  background: #333;
+  margin: 20px 60px;
 
-  .swx > [type="checkbox"]:checked + label + .swx-knob {
-    right: 5px;
-    background-color: #57cb85; }
+  border-radius: 50px;
+  position: relative;
+}
 
-  .swx > [type="checkbox"]:not(:checked) + label + .swx-knob {
-    right: 25px;
-    background-color: #849fbb; }
+.checkboxTwo:before {
+  content: '';
+  position: absolute;
+  top: 19px;
+  left: 14px;
+  height: 2px;
+  width: 90px;
+  background: #111;
+}
+
+.checkboxTwo label {
+  display: block;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+
+  transition: all .5s ease;
+  cursor: pointer;
+  position: absolute;
+  top: 9px;
+  z-index: 1;
+  left: 12px;
+  background: #ddd;
+}
+
+.checkboxTwo input[type=checkbox]:checked + label {
+  left: 84px;
+  background: #26ca28;
+}
