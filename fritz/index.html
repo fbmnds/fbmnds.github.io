@@ -165,7 +165,7 @@ animation: spinoffPulse 1s infinite linear;
         function status () {
             var url = url0 + "/status";
             alert (url);
-            fetch({"url":url,"mode":"cors"}).then(function (response) {
+            fetch(url).then(function (response) {
                 return response.json();
             }).then(function (json) {
                 console.log(json);
@@ -219,7 +219,7 @@ animation: spinoffPulse 1s infinite linear;
             else if (x == 'eth')   { url += "/4"; swx_ctl(eth); }
             else { return -1; }
 
-            fetch({"url":url,"mode":"cors"}).then(function (response) {
+            fetch(url).then(function (response) {
                 return response.json();
             }).then(function (json) {
                 console.log(json);
