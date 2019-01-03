@@ -80,9 +80,9 @@ function swx (x = 'undefined') {
     else { return -1; }
 
     fetch(url, post_opts()).then(function (response) {
-        return response.json();
+        return {};
     }).then(function (_) {
-        fetch(url, post_opts()).then(function (response) {
+        fetch(url_status, post_opts()).then(function (response) {
             return response.json();
         }).then(function (json) {
             console.log(json);
