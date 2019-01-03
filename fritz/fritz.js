@@ -79,10 +79,10 @@ function swx (x = 'undefined') {
     else if (x == 'eth')   { url += "/4"; swx_ctl(eth); }
     else { return -1; }
 
-    fetch(url).then(function (response) {
+    fetch(url, post_opts()).then(function (response) {
         return response.json();
     }).then(function (_) {
-        fetch(url).then(function (response) {
+        fetch(url, post_opts()).then(function (response) {
             return response.json();
         }).then(function (json) {
             console.log(json);
