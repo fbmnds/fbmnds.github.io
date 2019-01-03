@@ -25,8 +25,7 @@ function post_opts () {
 };
 
 function status () {
-    var inp = { "url": url_state, post_opts() }
-    fetch(inp).then(function (response) {
+    fetch(url_status, post_opts()).then(function (response) {
         return response.json();
     }).then(function (json) {
         console.log(json);
@@ -103,6 +102,6 @@ function swx4 () { swx('eth'); };
 function refresh () {
     ip = document.getElementById("ip").value;
     api_key = document.getElementById("api_key").value;
-    url0    = "https://" + ip + "/" + api_key;
+    url0    = "https://" + ip;
     status ();
 };
