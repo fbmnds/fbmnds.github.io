@@ -5,9 +5,28 @@ var eth     = 0;
 var api_key = "";
 var ip      = "";
 var url0    = "";
+var url_status = url0 + "/status";
+function post_opts () {
+    // Default options are marked with *
+    return {
+        method: "POST", // *GET, POST, PUT, DELETE, etc.
+        mode: "cors", // no-cors, cors, *same-origin
+        cache: "no-cache", // *default, no-cache, reload, force-cache, only-if-cached
+        headers: {
+            "Content-Type": "text/plain"  // avoid preflight request
+            //"Content-Type": "application/json",
+            //"Content-Type": "application/x-www-form-urlencoded",
+        },
+        credentials : "omit",
+        //redirect: "follow", // manual, *follow, error
+        //referrer: "no-referrer", // no-referrer, *client
+        body: JSON.stringify({ "api_key": api_key }) // body data type must match "Content-Type" header
+    }
+};
+
 function status () {
-    var url = url0 + "/status";
-    fetch(url).then(function (response) {
+    var inp = { "url": url_state, post_opts() }
+    fetch(inp).then(function (response) {
         return response.json();
     }).then(function (json) {
         console.log(json);

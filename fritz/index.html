@@ -4,7 +4,7 @@
 <head>
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
     <link rel="icon" href="img/favicon-32x32.png" sizes="32x32" />
     <link rel="icon" href="img/favicon-192x192.png" sizes="192x192" />
     <link rel="apple-touch-icon-precomposed" href="img/favicon-180x180.png" />
@@ -17,9 +17,12 @@
             margin-bottom: 1cm;
         }
     </style>
+
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js" integrity="sha384-wHAiFfRlMFy6i5SRaxvfOCifBUQy1xHdJ/yoi7FRNXMRBu5WHdZYu1hA6ZOblgut" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js" integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k" crossorigin="anonymous"></script>
     <script type="text/javascript" src="fritz.js"></script>
-
-
 </head>
 
 <body>
@@ -46,30 +49,39 @@
             </form>
         </div>
     </div>
+    <div id="refresh" class="container bottom-one">
+        <div id="refresh" class="container bottom-one">
+            <div id="refresh" class="container bottom-one">
+                <div id="refresh" class="container bottom-one">
+                    <div id="refresh" class="container bottom-one">
+                        <div id="refresh" class="container bottom-one">
+                            <div id="refresh" class="container bottom-one">
+                                <div id="refresh" class="container bottom-one">
+
 
     <div id="refresh" class="container bottom-one">
         <button onclick="refresh();">Refresh</button>
     </div>
 
     <div id="controls" style="display:block;" class="container bottom-one">
-        <div class="checkboxTwo">
-            <input type="checkbox" id="fun_p64" value="1" name=""  onclick="swx1();">
-            <label for="fun-p64">fun & p64</label>
+        <div class="custom-control custom-switch">
+            <input type="checkbox" class="custom-control-input" id="fun_p64" value="1" name="" onclick="swx1();">
+            <label class="custom-control-label" for="fun-p64">fun & p64</label>
         </div>
 
-        <div class="checkboxTwo">
-            <input type="checkbox" id="zen" onclick="swx2();">
-            <label for="zen">zen</label>
+        <div class="custom-control custom-switch">
+            <input type="checkbox" class="custom-control-input" id="zen" onclick="swx2();">
+            <label class="custom-control-label" for="zen">zen</label>
         </div>
 
-        <div class="checkboxTwo">
-            <input type="checkbox" id="store" onclick="swx3();">
-            <label for="store">store</label>
+        <div class="custom-control custom-switch">
+            <input type="checkbox" class="custom-control-input" id="store" onclick="swx3();">
+            <label class="custom-control-label" for="store">store</label>
         </div>
 
-        <div class="checkboxTwo">
-            <input type="checkbox" id="eth" onclick="swx4();">
-            <label for="eth">eth</label>
+        <div class="custom-control custom-switch">
+            <input type="checkbox" class="custom-control-input" id="eth" onclick="swx4();">
+            <label class="custom-control-label" for="eth">eth</label>
         </div>
     </div>
 
