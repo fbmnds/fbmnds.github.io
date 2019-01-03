@@ -39,26 +39,10 @@ function status () {
     });
 };
 function swx_ctl_state () {
-    if (fun_p64 == 1) {
-        var e = document.getElementById('fun-p64');
-        e.checked = true;
-        e.after = true;
-    };
-    if (zen == 1) {
-        var e = document.getElementById('zen');
-        e.checked = true;
-        e.after = true;
-    };
-    if (store == 1) {
-        var e = document.getElementById('store');
-        e.checked = true;
-        e.after = true;
-    };
-    if (eth == 1) {
-        var e = document.getElementById('eth');
-        e.checked = true;
-        e.after = true;
-    };
+    fun_p64 ? document.getElementById('fun-p64').checked = true : document.getElementById('fun-p64').checked = false;
+    zen     ? document.getElementById('zen').checked     = true : document.getElementById('zen').checked     = false;
+    store   ? document.getElementById('store').checked   = true : document.getElementById('store').checked   = false;
+    eth     ? document.getElementById('eth').checked     = true : document.getElementById('eth').checked     = false;
 };
 function swx_visibility (id = 'undefined') {
     var e = document.getElementById(id);
