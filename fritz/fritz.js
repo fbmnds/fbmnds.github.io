@@ -5,7 +5,6 @@ var eth     = 0;
 var api_key = "";
 var ip      = "";
 var url0    = "";
-var url_status = url0 + "/status";
 function post_opts () {
     // Default options are marked with *
     return {
@@ -25,7 +24,7 @@ function post_opts () {
 };
 
 function status () {
-    fetch(url_status, post_opts()).then(function (response) {
+    fetch(url0 + "/status", post_opts()).then(function (response) {
         return response.json();
     }).then(function (json) {
         console.log(json);
@@ -66,7 +65,7 @@ function swx (x = 'undefined') {
     fetch(url, post_opts()).then(function (response) {
         return {};
     }).then(function (_) {
-        fetch(url_status, post_opts()).then(function (response) {
+        fetch(url0 + "/status", post_opts()).then(function (response) {
             return response.json();
         }).then(function (json) {
             console.log(json);
