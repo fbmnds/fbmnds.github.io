@@ -48,7 +48,7 @@ function status () {
 };
 function enable_ctls () {
     for (x in ctls) {
-        $('#'+x).disabled ? $('#'+x).removeAttr('disabled') : _;
+        try { $('#'+x).removeAttr('disabled') } finally {};
     };
 };
 function disable_ctls () {
