@@ -5,7 +5,7 @@ var eth     = 0;
 var api_key = "";
 var ip      = "";
 var url0    = "";
-var ctls    = [ "fun-p64", "zen", "store", "eth" ];
+var ctls    = [ "#fun-p64", "#zen", "#store", "#eth" ];
 function post_opts () {
     // Default options are marked with *
     return {
@@ -38,7 +38,7 @@ function status () {
             swx_ctl_state();
             enable_ctls();
         });
-    } finally {
+    } catch {
         fun_p64 = 0;
         zen = 0;
         store = 0;
@@ -47,20 +47,24 @@ function status () {
     };
 };
 function enable_ctls () {
-    for (x in ctls) {
-        try { $('#'+x).removeAttr('disabled') } finally {};
-    };
+    //for (x in ctls) { $(x).prop('disabled',false); };
+    $('#fun-p64').prop('disabled',false);
+    $('#zen').prop('disabled',false);
+    $('#store').prop('disabled',false);
+    $('#eth').prop('disabled',false);
 };
 function disable_ctls () {
-    for (x in ctls) {
-            $('#'+x).attr('disabled');
-    };
+    //for (x in ctls) { $(x).prop('disabled',true); };
+    $('#fun-p64').prop('disabled',true);
+    $('#zen').prop('disabled',true);
+    $('#store').prop('disabled',true);
+    $('#eth').prop('disabled',true);
 };
 function swx_ctl_state () {
-    fun_p64 ? $('#fun-p64').checked = true : $('#fun-p64').checked = false;
-    zen     ? $('#zen').checked     = true : $('#zen').checked     = false;
-    store   ? $('#store').checked   = true : $('#store').checked   = false;
-    eth     ? $('#eth').checked     = true : $('#eth').checked     = false;
+    fun_p64 ? $('#fun-p64').prop('checked',true) : $('#fun-p64').prop('checked',false);
+    zen     ? $('#zen').prop('checked',true)     : $('#zen').prop('checked',false);
+    store   ? $('#store').prop('checked',true)   : $('#store').prop('checked',false);
+    eth     ? $('#eth').prop('checked',true)     : $('#eth').prop('checked',false);
 };
 function swx_visibility (id = 'undefined') {
     var e = document.getElementById(id);
@@ -97,7 +101,7 @@ function swx (x = 'undefined') {
                 enable_ctls();
             });
         });
-    } finally {};
+    } catch {};
 };
 function swx1 () { swx('fun-p64'); };
 function swx2 () { swx('zen'); };
@@ -105,8 +109,9 @@ function swx3 () { swx('store'); };
 function swx4 () { swx('eth'); };
 
 function refresh () {
-    ip = document.getElementById("ip").value;
+    ip      = document.getElementById("ip").value;
     api_key = document.getElementById("api_key").value;
     url0    = "https://" + ip;
+    disable_ctls();
     status ();
 };
