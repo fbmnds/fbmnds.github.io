@@ -38,10 +38,10 @@ function status () {
     });
 };
 function swx_ctl_state () {
-    fun_p64 ? document.getElementById('fun-p64').checked = true : document.getElementById('fun-p64').checked = false;
-    zen     ? document.getElementById('zen').checked     = true : document.getElementById('zen').checked     = false;
-    store   ? document.getElementById('store').checked   = true : document.getElementById('store').checked   = false;
-    eth     ? document.getElementById('eth').checked     = true : document.getElementById('eth').checked     = false;
+    fun_p64 ? $('#fun-p64').checked = true : $('#fun-p64').checked = false;
+    zen     ? $('#zen').checked     = true : $('#zen').checked     = false;
+    store   ? $('#store').checked   = true : $('#store').checked   = false;
+    eth     ? $('#eth').checked     = true : $('#eth').checked     = false;
 };
 function swx_visibility (id = 'undefined') {
     var e = document.getElementById(id);
