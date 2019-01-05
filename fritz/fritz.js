@@ -5,6 +5,7 @@ var eth     = 0;
 var api_key = "";
 var ip      = "";
 var url0    = "";
+var ctls    = [ "fun-p64", "zen", "store", "eth" ];
 function post_opts () {
     // Default options are marked with *
     return {
@@ -22,20 +23,38 @@ function post_opts () {
         body: JSON.stringify({ "api_key": api_key }) // body data type must match "Content-Type" header
     }
 };
-
 function status () {
-    fetch(url0 + "/status", post_opts()).then(function (response) {
-        return response.json();
-    }).then(function (json) {
-        console.log(json);
-        fun_p64 = json.fun_p64;
-        zen = json.zen;
-        store = json.store;
-        eth = json.eth;
-        //swx_visibility("get-status");
-        //swx_visibility("controls");
-        swx_ctl_state();
-    });
+    try {
+        fetch(url0 + "/status", post_opts()).then(function (response) {
+            return response.json();
+        }).then(function (json) {
+            console.log(json);
+            fun_p64 = json.fun_p64;
+            zen = json.zen;
+            store = json.store;
+            eth = json.eth;
+            //swx_visibility("get-status");
+            //swx_visibility("controls");
+            swx_ctl_state();
+            enable_ctls();
+        });
+    } finally {
+        fun_p64 = 0;
+        zen = 0;
+        store = 0;
+        eth = 0;
+        disable_ctls();
+    };
+};
+function enable_ctls () {
+    for (x in ctls) {
+        $('#'+x).disabled ? $('#'+x).removeAttr('disabled') : _;
+    };
+};
+function disable_ctls () {
+    for (x in ctls) {
+            $('#'+x).attr('disabled');
+    };
 };
 function swx_ctl_state () {
     fun_p64 ? $('#fun-p64').checked = true : $('#fun-p64').checked = false;
@@ -56,26 +75,29 @@ function swx (x = 'undefined') {
         if (c == 0) { c = 1; url += "/on"; }
         else        { c = 0; url += "/off"; }
     };
+    disable_ctls();
     if (x == 'fun-p64')    { url += "/1"; swx_ctl(fun_p64); }
     else if (x == 'zen')   { url += "/3"; swx_ctl(zen); }
     else if (x == 'store') { url += "/2"; swx_ctl(store); }
     else if (x == 'eth')   { url += "/4"; swx_ctl(eth); }
-    else { return -1; }
-
-    fetch(url, post_opts()).then(function (response) {
-        return {};
-    }).then(function (_) {
-        fetch(url0 + "/status", post_opts()).then(function (response) {
-            return response.json();
-        }).then(function (json) {
-            console.log(json);
-            fun_p64 = json.fun_p64;
-            zen = json.zen;
-            store = json.store;
-            eth = json.eth;
-            swx_ctl_state();
+    else { return -1; };
+    try {
+        fetch(url, post_opts()).then(function (response) {
+            return {};
+        }).then(function (_) {
+            fetch(url0 + "/status", post_opts()).then(function (response) {
+                return response.json();
+            }).then(function (json) {
+                console.log(json);
+                fun_p64 = json.fun_p64;
+                zen = json.zen;
+                store = json.store;
+                eth = json.eth;
+                swx_ctl_state();
+                enable_ctls();
+            });
         });
-    });
+    } finally {};
 };
 function swx1 () { swx('fun-p64'); };
 function swx2 () { swx('zen'); };
