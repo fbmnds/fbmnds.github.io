@@ -6,6 +6,13 @@ var api_key = "";
 var ip      = "";
 var url0    = "";
 var ctls    = [ "#fun-p64", "#zen", "#store", "#eth" ];
+var l_btn = `
+<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+Loading
+`;
+var r_btn = "Retry";
+var btn   = "Submit";
+function toggle_btn (x = 'undefined') { $('#refresh-btn').html(x); };
 function post_opts () {
     // Default options are marked with *
     return {
@@ -24,27 +31,27 @@ function post_opts () {
     }
 };
 function status () {
-    try {
-        fetch(url0 + "/status", post_opts()).then(function (response) {
-            return response.json();
-        }).then(function (json) {
-            console.log(json);
-            fun_p64 = json.fun_p64;
-            zen = json.zen;
-            store = json.store;
-            eth = json.eth;
-            //swx_visibility("get-status");
-            //swx_visibility("controls");
-            swx_ctl_state();
-            enable_ctls();
-        });
-    } catch {
+    fetch(url0 + "/status", post_opts()).then(function (response) {
+        return response.json();
+    }).then(function (json) {
+        console.log(json);
+        fun_p64 = json.fun_p64;
+        zen = json.zen;
+        store = json.store;
+        eth = json.eth;
+        //swx_visibility("get-status");
+        //swx_visibility("controls");
+        swx_ctl_state();
+        enable_ctls();
+        toggle_btn (btn);
+    }).catch(function (_) {
         fun_p64 = 0;
         zen = 0;
         store = 0;
         eth = 0;
         disable_ctls();
-    };
+        toggle_btn (r_btn);
+    });
 };
 function enable_ctls () {
     //for (x in ctls) { $(x).prop('disabled',false); };
@@ -80,38 +87,29 @@ function swx (x = 'undefined') {
         else        { c = 0; url += "/off"; }
     };
     disable_ctls();
+    toggle_btn (l_btn);
     if (x == 'fun-p64')    { url += "/1"; swx_ctl(fun_p64); }
     else if (x == 'zen')   { url += "/3"; swx_ctl(zen); }
     else if (x == 'store') { url += "/2"; swx_ctl(store); }
     else if (x == 'eth')   { url += "/4"; swx_ctl(eth); }
     else { return -1; };
-    try {
-        fetch(url, post_opts()).then(function (response) {
-            return {};
-        }).then(function (_) {
-            fetch(url0 + "/status", post_opts()).then(function (response) {
-                return response.json();
-            }).then(function (json) {
-                console.log(json);
-                fun_p64 = json.fun_p64;
-                zen = json.zen;
-                store = json.store;
-                eth = json.eth;
-                swx_ctl_state();
-                enable_ctls();
-            });
-        });
-    } catch {};
+    fetch(url, post_opts()).then(function (response) {
+        return {};
+    }).then(function (_) {
+        status();
+    }).catch (function (_) {
+        toggle_btn (r_btn);
+    });
 };
 function swx1 () { swx('fun-p64'); };
 function swx2 () { swx('zen'); };
 function swx3 () { swx('store'); };
 function swx4 () { swx('eth'); };
-
 function refresh () {
     ip      = document.getElementById("ip").value;
     api_key = document.getElementById("api_key").value;
     url0    = "https://" + ip;
     disable_ctls();
-    status ();
+    toggle_btn (l_btn);
+    status();
 };

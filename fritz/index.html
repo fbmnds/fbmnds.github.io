@@ -25,7 +25,7 @@
     <script type="text/javascript" src="fritz.js"></script>
 </head>
 
-<body>
+<body onload="refresh();">
 
     <div class="container bottom-one">
         <h2>Controls</h2>
@@ -51,7 +51,9 @@
     </div>
 
     <div id="refresh" class="container bottom-one">
-        <button onclick="refresh();">Refresh</button>
+        <button class="btn btn-primary" id="refresh-btn" onclick="refresh();">
+            Refresh
+        </button>
     </div>
 
     <div id="controls" style="display:block;" class="container bottom-one">
